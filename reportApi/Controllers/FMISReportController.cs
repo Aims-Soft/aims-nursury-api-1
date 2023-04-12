@@ -88,6 +88,21 @@ namespace reportApi.Controllers
                 return Ok(e);
             }
         }
+        [HttpGet("getDailySales")]
+        public IActionResult getDailySales(string invoiceDate)
+        {
+            try
+            {
+                cmd = "select * from public.\"view_dailySales\" where \"view_dailySales\".\"invoiceDate\" = '" +invoiceDate + "'";
+
+                var appMenu = dapperQuery.Qry<DailySales>(cmd, _dbCon);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
         
         [HttpGet("getPeriodicSale")]
         public IActionResult getPeriodicSale(int partyID, string fromDate, string toDate)
