@@ -103,6 +103,21 @@ namespace reportApi.Controllers
                 return Ok(e);
             }
         }
+        [HttpGet("getStockInStockOut")]
+        public IActionResult getStockInStockOut(string invDate)
+        {
+            try
+            {
+                cmd = "select * from public.\"productStockInStockOut\"('"+invDate+"')";
+
+                var appMenu = dapperQuery.Qry<StockInStockOut>(cmd, _dbCon);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
         
         [HttpGet("getPeriodicSale")]
         public IActionResult getPeriodicSale(int partyID, string fromDate, string toDate)
