@@ -9,5 +9,6 @@ namespace reportApi.Entities
         public int productID { get; set; }
         public string productName { get; set; }
         public int stockin { get; set; }
+        public int stockout { get; set; }
     }
 }
