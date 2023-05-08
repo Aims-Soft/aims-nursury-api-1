@@ -89,11 +89,11 @@ namespace reportApi.Controllers
             }
         }
         [HttpGet("getDailySales")]
-        public IActionResult getDailySales(string invoiceDate)
+        public IActionResult getDailySales(string startDate,string endDate)
         {
             try
             {
-                cmd = "select * from public.\"view_dailySales\" where \"view_dailySales\".\"invoiceDate\" = '" +invoiceDate + "'";
+                cmd = "SELECT * FROM public.\"view_dailySales\" WHERE \"view_dailySales\".\"invoiceDate\" BETWEEN '" + startDate + "' AND '" + endDate + "'";
 
                 var appMenu = dapperQuery.Qry<DailySales>(cmd, _dbCon);
                 return Ok(appMenu);

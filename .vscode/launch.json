@@ -9,9 +9,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/posCoreModuleApi/bin/Debug/net5.0/posCoreModuleApi.dll",
+      "program": "${workspaceFolder}/reportApi/bin/Debug/net5.0/reportApi.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/posCoreModuleApi",
+      "cwd": "${workspaceFolder}/reportApi",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
