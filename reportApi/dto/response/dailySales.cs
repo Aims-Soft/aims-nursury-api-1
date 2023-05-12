@@ -8,6 +8,7 @@ namespace reportApi.Entities
     {
         public string invoiceNo { get; set; }
         public string invoiceDate { get; set; }
+        public int discount { get; set; }
         public string productName { get; set; }
         public int qty { get; set; }
         public int costPrice { get; set; }
