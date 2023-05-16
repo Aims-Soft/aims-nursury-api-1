@@ -7,6 +7,8 @@ namespace posCoreModuleApi.Entities
     public class Party
     {
         public int partyID { get; set; }
+        public int EmployeeNo { get; set; }
+        public string nextOfKin { get; set; }
         public int cityID { get; set; }
         public int rootID { get; set; }
         public int branchID { get; set; }
