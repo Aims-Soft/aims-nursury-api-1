@@ -103,6 +103,21 @@ namespace reportApi.Controllers
                 return Ok(e);
             }
         }
+        [HttpGet("getDailySalesByOrder")]
+        public IActionResult getDailySalesByOrder(string invoiceDate)
+        {
+            try
+            {
+                cmd = "SELECT * FROM public.\"view_dailySalesbyOrder\" WHERE \"view_dailySalesbyOrder\".\"invoiceDate\" = '" + invoiceDate + "'";
+
+                var appMenu = dapperQuery.Qry<DailySalesByOrder>(cmd, _dbCon);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
         [HttpGet("getStockInStockOut")]
         public IActionResult getStockInStockOut(string invDate)
         {
