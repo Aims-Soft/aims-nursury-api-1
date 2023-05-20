@@ -104,11 +104,11 @@ namespace reportApi.Controllers
             }
         }
         [HttpGet("getDailySalesByOrder")]
-        public IActionResult getDailySalesByOrder(string invoiceDate)
+        public IActionResult getDailySalesByOrder(string startDate,string endDate)
         {
             try
             {
-                cmd = "SELECT * FROM public.\"view_dailySalesbyOrder\" WHERE \"view_dailySalesbyOrder\".\"invoiceDate\" = '" + invoiceDate + "'";
+                cmd = "SELECT * FROM public.\"view_dailySalesbyOrder\" WHERE \"view_dailySalesbyOrder\".\"invoiceDate\" BETWEEN '" + startDate + "' AND '" + endDate + "'";
 
                 var appMenu = dapperQuery.Qry<DailySalesByOrder>(cmd, _dbCon);
                 return Ok(appMenu);
