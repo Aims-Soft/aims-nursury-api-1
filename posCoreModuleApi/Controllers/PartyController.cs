@@ -18,15 +18,21 @@ namespace posCoreModuleApi.Controllers
     public class PartyController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        // private dynamicString _dynamic;
+        // private IDynamicString _dynamicString;
         private string cmd, cmd2;
-
+        private string subconStr;
+        
         public PartyController(IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            // _dynamic = dynamic;
+            // _dynamicString = dynamicString;
+            // _subconStr = SubdbCon;
         }
 
         [HttpGet("getParty")]
-        public IActionResult getParty(int businessID,int companyID)
+        public IActionResult getParty(int businessID,int companyID,int userID)
         {
             try
             {
@@ -38,7 +44,9 @@ namespace posCoreModuleApi.Controllers
                 {
                     cmd = "SELECT * FROM view_party where \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + " order by \"partyID\" desc";
                 }
-                var appMenu = dapperQuery.Qry<Party>(cmd, _dbCon);
+                subconStr = userCredentials.FindMe(userID);
+
+                var appMenu = dapperQuery.StrConQry<Party>(cmd, subconStr);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -48,7 +56,7 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getAllParties")]
-        public IActionResult getAllParties(int businessID,int companyID)
+        public IActionResult getAllParties(int businessID,int companyID,int userID)
         {
             try
             {
@@ -61,7 +69,8 @@ namespace posCoreModuleApi.Controllers
                     cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + "";
                 }
                 
-                var appMenu = dapperQuery.Qry<Party>(cmd, _dbCon);
+                subconStr = userCredentials.FindMe(userID);
+                var appMenu = dapperQuery.StrConQry<Party>(cmd, subconStr);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -88,7 +97,8 @@ namespace posCoreModuleApi.Controllers
 
                 List<Party> appMenuParty = new List<Party>();
                 cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND (\"type\" = 'supplier' OR \"type\" = 'customer')";
-                appMenuParty = (List<Party>)dapperQuery.QryResult<Party>(cmd2, _dbCon);
+                subconStr = userCredentials.FindMe(obj.userID);
+                appMenuParty = (List<Party>)dapperQuery.StrConQry<Party>(cmd2, subconStr);
 
                 if (appMenuParty.Count > 0)
                     cnic = appMenuParty[0].cnic;
@@ -111,7 +121,7 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }

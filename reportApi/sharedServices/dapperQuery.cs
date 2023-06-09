@@ -22,6 +22,30 @@ namespace reportApi.Services
             }
         }
 
+        public string FindMe(int userID)
+        {
+            try
+            {
+                string cmd = "Select * from view_getcompany where \"userID\" = " + userID + " "; // corrected query string
+
+                var user = (List<dynamicResponse>)dapperQuery.QryResult<dynamicResponse>(cmd, _dbCon); // assuming _dapper is properly instantiated
+
+                if (user.Count > 0)
+                {
+                    return "Host="+user[0].instanceName+";Database="+user[0].dbName+";Port=5432;Username="+user[0].userName+";Password="+user[0].credentails+"";
+                }
+                else
+                {
+                    return null; // or return an appropriate value when no results are found
+                }
+            }
+            catch (Exception e)
+            {
+                // Handle exception
+                return null; // or return an appropriate value when an exception occurs
+            }
+        }
+
         public static IEnumerable<T> QryResult<T>(string sql, IOptions<conStr> conStr)
         {
             using (NpgsqlConnection con = new NpgsqlConnection(conStr.Value.dbCon))
