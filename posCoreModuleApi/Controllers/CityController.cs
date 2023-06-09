@@ -19,6 +19,7 @@ namespace posCoreModuleApi.Controllers
     {
         private readonly IOptions<conStr> _dbCon;
         private string cmd, cmd2;
+        private string subconStr;
 
         public CityController(IOptions<conStr> dbCon)
         {
@@ -26,12 +27,13 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getCity")]
-        public IActionResult getCity()
+        public IActionResult getCity(int userID)
         {
             try
             {
                 cmd = "select * from public.\"city\" where \"isDeleted\"::int = 0 ";
-                var appMenu = dapperQuery.Qry<City>(cmd, _dbCon);
+                subconStr = userCredentials.FindMe(userID);
+                var appMenu = dapperQuery.StrConQry<City>(cmd, subconStr);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -56,7 +58,8 @@ namespace posCoreModuleApi.Controllers
 
                 List<City> appMenuCity = new List<City>();
                 cmd2 = "select \"cityName\" from city where \"isDeleted\"::int = 0 and \"cityName\" = '" + obj.cityName + "'";
-                appMenuCity = (List<City>)dapperQuery.QryResult<City>(cmd2, _dbCon);
+                subconStr = userCredentials.FindMe(obj.userID);
+                appMenuCity = (List<City>)dapperQuery.StrConQry<City>(cmd2, subconStr);
 
                 if (appMenuCity.Count > 0)
                     city = appMenuCity[0].cityName;
@@ -82,7 +85,7 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -128,8 +131,8 @@ namespace posCoreModuleApi.Controllers
                 var response = "";
 
                 cmd = "update public.city set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"cityID\" = " + obj.cityID + ";";
-
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                subconStr = userCredentials.FindMe(obj.userID);
+                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                 {
                     rowAffected = con.Execute(cmd);
                 }

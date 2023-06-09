@@ -19,6 +19,7 @@ namespace posCoreModuleApi.Controllers
     {
         private readonly IOptions<conStr> _dbCon;
         private string cmd, cmd2;
+        private string subconStr;
 
         public EmployeeController(IOptions<conStr> dbCon)
         {
@@ -26,7 +27,7 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getEmployee")]
-        public IActionResult getEmployee(int businessID,int companyID)
+        public IActionResult getEmployee(int businessID,int companyID,int userID)
         {
             try
             {
@@ -35,7 +36,8 @@ namespace posCoreModuleApi.Controllers
                 }else{
                     cmd = "SELECT * FROM view_employee where \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + " order by \"partyID\" desc";
                 }
-                var appMenu = dapperQuery.Qry<Party>(cmd, _dbCon);
+                subconStr = userCredentials.FindMe(userID);
+                var appMenu = dapperQuery.StrConQry<Party>(cmd, subconStr);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -62,7 +64,8 @@ namespace posCoreModuleApi.Controllers
 
                 List<Party> appMenuEmployee = new List<Party>();
                 cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND \"type\" = 'Employee'";
-                appMenuEmployee = (List<Party>)dapperQuery.QryResult<Party>(cmd2, _dbCon);
+                subconStr = userCredentials.FindMe(obj.userID);
+                appMenuEmployee = (List<Party>)dapperQuery.StrConQry<Party>(cmd2, subconStr);
 
                 if (appMenuEmployee.Count > 0)
                     employeeName = appMenuEmployee[0].cnic;
@@ -85,7 +88,7 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }

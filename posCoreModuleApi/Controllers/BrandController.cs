@@ -19,6 +19,7 @@ namespace posCoreModuleApi.Controllers
     {
         private readonly IOptions<conStr> _dbCon;
         private string cmd, cmd2;
+        private string subconStr;
 
         public BrandController(IOptions<conStr> dbCon)
         {
@@ -26,12 +27,13 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getBrand")]
-        public IActionResult getBrand(int businessid,int companyid)
+        public IActionResult getBrand(int businessid,int companyid, int userID)
         {
             try
             {
                 cmd = "select * from public.\"brand\" where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
-                var appMenu = dapperQuery.Qry<Brand>(cmd, _dbCon);
+                subconStr = userCredentials.FindMe(userID);
+                var appMenu = dapperQuery.StrConQry<Brand>(cmd, subconStr);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -59,7 +61,8 @@ namespace posCoreModuleApi.Controllers
 
                 List<Brand> appMenuBrand = new List<Brand>();
                 cmd2 = "select \"brandName\" from brand where \"isDeleted\"::int = 0 and \"brandName\" = '" + obj.brandName + "' AND \"businessid\" = " + obj.businessid + " AND \"companyid\" = " + obj.companyid + "";
-                appMenuBrand = (List<Brand>)dapperQuery.QryResult<Brand>(cmd2, _dbCon);
+                subconStr = userCredentials.FindMe(obj.userID);
+                appMenuBrand = (List<Brand>)dapperQuery.StrConQry<Brand>(cmd2, subconStr);
 
                 if (appMenuBrand.Count > 0)
                     brand = appMenuBrand[0].brandName;
@@ -82,7 +85,7 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -129,7 +132,8 @@ namespace posCoreModuleApi.Controllers
 
                 cmd = "update public.brand set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"brandID\" = " + obj.brandID + ";";
 
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                subconStr = userCredentials.FindMe(obj.userID);
+                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                 {
                     rowAffected = con.Execute(cmd);
                 }

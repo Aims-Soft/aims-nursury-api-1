@@ -19,6 +19,7 @@ namespace posCoreModuleApi.Controllers
     {
         private readonly IOptions<conStr> _dbCon;
         private string cmd, cmd2, cmd3, cmd4, cmd5;
+        private string subconStr;
 
         public PaymentController(IOptions<conStr> dbCon)
         {
@@ -26,7 +27,7 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getPayments")]
-        public IActionResult getPayments(int businessID,int companyID)
+        public IActionResult getPayments(int businessID,int companyID,int userID)
         {
             try
             {   if (businessID == 0 && companyID == 0)
@@ -37,7 +38,8 @@ namespace posCoreModuleApi.Controllers
                 {
                     cmd = "select * from view_payment where \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + " ORDER BY \"invoiceNo\" DESC";    
                 }
-                var appMenu = dapperQuery.Qry<Payment>(cmd, _dbCon);
+                subconStr = userCredentials.FindMe(userID);
+                var appMenu = dapperQuery.StrConQry<Payment>(cmd, subconStr);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -47,12 +49,13 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getPaymentDetail")]
-        public IActionResult getPaymentDetail(int invoiceNo)
+        public IActionResult getPaymentDetail(int invoiceNo, int userID)
         {
             try
             {
                 cmd = "select \"invoiceNo\", debit, credit, \"coaID\" from \"invoiceDetail\" where \"isDeleted\"::int = 0 and \"invoiceNo\" = " + invoiceNo + " ";
-                var appMenu = dapperQuery.Qry<PaymentDetail>(cmd, _dbCon);
+                subconStr = userCredentials.FindMe(userID);
+                var appMenu = dapperQuery.StrConQry<PaymentDetail>(cmd, subconStr);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -92,8 +95,8 @@ namespace posCoreModuleApi.Controllers
                 }
 
                 cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"partyID\", \"cashReceived\", \"discount\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.partyID + "', " + obj.amount + ", " + obj.discount + ", '" + payType + "', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
-
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                subconStr = userCredentials.FindMe(obj.userID);
+                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                 {
                     rowAffected = con.Execute(cmd);
                 }
@@ -104,7 +107,7 @@ namespace posCoreModuleApi.Controllers
 
                     //getting last saved invoice no
                     cmd2 = "SELECT \"invoiceNo\" FROM public.invoice order by \"invoiceNo\" desc limit 1";
-                    appMenuInvoice = (List<Invoice>)dapperQuery.QryResult<Invoice>(cmd2, _dbCon);
+                    appMenuInvoice = (List<Invoice>)dapperQuery.StrConQry<Invoice>(cmd2, subconStr);
 
                     var invoiceNo = appMenuInvoice[0].invoiceNo;
 
@@ -120,7 +123,7 @@ namespace posCoreModuleApi.Controllers
                             cmd2 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.discount + "', 0, '3', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ")";
                         }
 
-                        using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                        using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                         {
                             rowAffected2 = con.Execute(cmd2);
                         }
@@ -139,12 +142,12 @@ namespace posCoreModuleApi.Controllers
                         cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', 0, '" + obj.amount + "', '" + obj.coaID + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ")";
                     }
 
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected3 = con.Execute(cmd3);
                     }
 
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected4 = con.Execute(cmd4);
                     }
@@ -200,8 +203,8 @@ namespace posCoreModuleApi.Controllers
                 }
 
                 cmd = "update public.\"invoice\" set \"invoiceDate\" = '" + obj.invoiceDate + "', \"partyID\" = '" + obj.partyID + "', \"cashReceived\" = '" + obj.amount + "', \"discount\" = '" + obj.discount + "', \"invoiceType\" = '" + payType + "', \"description\" = '" + obj.description + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"invoiceNo\" = " + obj.invoiceNo + ";";
-
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                subconStr = userCredentials.FindMe(obj.userID);
+                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                 {
                     rowAffected = con.Execute(cmd);
                 }
@@ -211,7 +214,7 @@ namespace posCoreModuleApi.Controllers
                 {
 
                     cmd5 = "update public.\"invoiceDetail\" set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"invoiceNo\" = " + obj.invoiceNo + ";";
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected5 = con.Execute(cmd5);
                     }
@@ -228,7 +231,7 @@ namespace posCoreModuleApi.Controllers
                             cmd2 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values ('" + obj.invoiceNo + "', '" + obj.discount + "', 0, '3', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ")";
                         }
 
-                        using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                        using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                         {
                             rowAffected2 = con.Execute(cmd2);
                         }
@@ -247,12 +250,12 @@ namespace posCoreModuleApi.Controllers
                         cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values ('" + obj.invoiceNo + "', 0, '" + obj.amount + "', '" + obj.coaID + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ")";
                     }
 
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected3 = con.Execute(cmd3);
                     }
 
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected4 = con.Execute(cmd4);
                     }
@@ -291,15 +294,15 @@ namespace posCoreModuleApi.Controllers
                 var response = "";
 
                 cmd = "update public.\"invoice\" set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"invoiceNo\" = " + obj.invoiceNo + ";";
-
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                subconStr = userCredentials.FindMe(obj.userID);
+                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                 {
                     rowAffected = con.Execute(cmd);
                 }
 
                 cmd2 = "update public.\"invoiceDetail\" set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"invoiceNo\" = " + obj.invoiceNo + ";";
 
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                 {
                     rowAffected2 = con.Execute(cmd2);
                 }

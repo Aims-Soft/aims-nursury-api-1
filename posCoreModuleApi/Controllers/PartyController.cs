@@ -167,8 +167,9 @@ namespace posCoreModuleApi.Controllers
                 var response = "";
 
                 cmd = "update public.\"party\" set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"partyID\" = " + obj.partyID + ";";
-
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                
+                subconStr = userCredentials.FindMe(obj.userID);
+                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                 {
                     rowAffected = con.Execute(cmd);
                 }
@@ -211,7 +212,8 @@ namespace posCoreModuleApi.Controllers
 
                 List<CustomerSale> appMenuParty = new List<CustomerSale>();
                 cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND (\"type\" = 'customer')";
-                appMenuParty = (List<CustomerSale>)dapperQuery.QryResult<CustomerSale>(cmd2, _dbCon);
+                subconStr = userCredentials.FindMe(obj.userID);
+                appMenuParty = (List<CustomerSale>)dapperQuery.StrConQry<CustomerSale>(cmd2, subconStr);
 
                 if (appMenuParty.Count > 0)
                     cnic = appMenuParty[0].cnic;
@@ -234,7 +236,7 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -266,15 +268,17 @@ namespace posCoreModuleApi.Controllers
         }
 
 
-         [HttpGet("getAllCustomer")]
-        public IActionResult getAllCustomer()
+        [HttpGet("getAllCustomer")]
+        public IActionResult getAllCustomer(int userID)
         {
             try
             {
                
-                    cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"type\"='customer'  ";
+                cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"type\"='customer'  ";
+
+                subconStr = userCredentials.FindMe(userID);
                 
-                var appMenu = dapperQuery.Qry<CustomerSale>(cmd, _dbCon);
+                var appMenu = dapperQuery.StrConQry<CustomerSale>(cmd, subconStr);
                 return Ok(appMenu);
             }
             catch (Exception e)
