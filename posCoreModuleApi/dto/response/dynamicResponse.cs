@@ -10,5 +10,6 @@ namespace posCoreModuleApi.Entities
         public string userName { get; set; }
         public string credentials { get; set; }
         public string dbName { get; set; }
+        
     }
 }
