@@ -114,15 +114,5 @@ namespace posCoreModuleApi.Services
 
             return "Ok";
         }
-
-        // public static IEnumerable<int> CRUDQry(string query, DynamicParameters parameters, IOptions<conStr> conStr)
-        // {
-        //     using (NpgsqlConnection con = new NpgsqlConnection(conStr.Value.dbCon))
-        //     {
-        //         var rowAffected = con.Execute(query, parameters, commandType: CommandType.Text);
-
-        //         yield return rowAffected;
-        //     }
-        // }
     }
 }
