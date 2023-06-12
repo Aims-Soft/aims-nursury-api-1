@@ -18,15 +18,18 @@ namespace posCoreModuleApi.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        private readonly dapperQuery _dapperQuery;
         private string cmd, cmd2, cmd3, cmd4, cmd5;
+        public string saveConStr;
 
-        public ProductController(IOptions<conStr> dbCon)
+        public ProductController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            _dapperQuery = dapperQuery;
         }
 
         [HttpGet("getProduct")]
-        public IActionResult getProduct(int businessID,int companyID)
+        public IActionResult getProduct(int businessID,int companyID,int userID, int moduleId)
         {
             try
             {   
@@ -38,7 +41,7 @@ namespace posCoreModuleApi.Controllers
                 {
                     cmd = "SELECT * FROM view_product where \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + " order by \"productID\" desc";
                 }
-                var appMenu = dapperQuery.Qry<Product>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<Product>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -129,7 +132,7 @@ namespace posCoreModuleApi.Controllers
         // }
 
         [HttpGet("getProductByCategory")]
-        public IActionResult getProductByCategory(int categoryID, int companyID, int businessID)
+        public IActionResult getProductByCategory(int categoryID, int companyID, int businessID,int userID, int moduleId)
         {
             try
             {
@@ -141,8 +144,8 @@ namespace posCoreModuleApi.Controllers
                 {
                     cmd = "SELECT * FROM view_product where \"categoryID\" = " + categoryID + " AND \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + " order by \"productID\" desc";    
                 }
-                
-                var appMenu = dapperQuery.Qry<Product>(cmd, _dbCon);
+
+                var appMenu = _dapperQuery.StrConQry<Product>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -168,7 +171,7 @@ namespace posCoreModuleApi.Controllers
                 var productName = "";
 
                 cmd2 = "select \"productName\" from product where \"isDeleted\"::int = 0 AND \"productName\" = '" + obj.productName + "' AND \"businessid\" = " + obj.businessid + " AND \"companyid\" = " + obj.companyid + "";
-                appMenuProduct = (List<Product>)dapperQuery.QryResult<Product>(cmd2, _dbCon);
+                appMenuProduct = (List<Product>)_dapperQuery.StrConQry<Product>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuProduct.Count > 0)
                     productName = appMenuProduct[0].productName;
@@ -199,7 +202,11 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -208,7 +215,7 @@ namespace posCoreModuleApi.Controllers
                 if (rowAffected > 0)
                 {
                     cmd2 = "SELECT \"productID\" FROM public.product order by \"productID\" desc limit 1";
-                    appMenuProduct = (List<Product>)dapperQuery.QryResult<Product>(cmd2, _dbCon);
+                    appMenuProduct = (List<Product>)_dapperQuery.StrConQry<Product>(cmd2, obj.userID,obj.moduleId);
 
                     var prodID = appMenuProduct[0].productID;
 
@@ -216,7 +223,7 @@ namespace posCoreModuleApi.Controllers
                     {
 
                         cmd3 = "select \"barcodeID\" from public.barcode order by \"barcodeID\" desc limit 1";
-                        appMenuBarcode = (List<Product>)dapperQuery.QryResult<Product>(cmd3, _dbCon);
+                        appMenuBarcode = (List<Product>)_dapperQuery.StrConQry<Product>(cmd3, obj.userID,obj.moduleId);
 
                         var barcodeID = 0;
                         if (appMenuBarcode.Count > 0)
@@ -237,13 +244,20 @@ namespace posCoreModuleApi.Controllers
 
                     }
 
-
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected2 = con.Execute(cmd4);
                     }
                     cmd5 = "insert into public.\"productPrice\" (\"productID\", \"costPrice\", \"salePrice\", \"retailPrice\", \"wholeSalePrice\", \"gst\", \"et\", \"packing\", \"packingSalePrice\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values (" + prodID + ", " + obj.costPrice + ", " + obj.salePrice + ", " + obj.retailPrice + ", " + obj.wholeSalePrice + ", " + obj.gst + ", " + obj.et + ", " + obj.packingQty + ", " + obj.packingSalePrice + ", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected3 = con.Execute(cmd5);
                     }
@@ -296,7 +310,11 @@ namespace posCoreModuleApi.Controllers
 
                 cmd = "update product set \"categoryID\" = '" + obj.categoryID + "',\"brandID\" = '" + obj.brandID + "',\"uomID\" = '" + obj.uomID + "', \"productName\" = '" + obj.productName + "', \"productNameUrdu\" = '" + obj.productNameUrdu + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + ",\"potType\" = '" + obj.potType + "',\"potSize\" = '" + obj.potSize + "',\"applicationedoc\" = '" + obj.applicationEDoc + "', \"mfgDate\" = '" + obj.mfgDate + "', \"expDate\" = '" + obj.expDate + "' where \"productID\" = " + obj.productID + ";";
 
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                 {
                     rowAffected = con.Execute(cmd);
                 }
@@ -305,13 +323,21 @@ namespace posCoreModuleApi.Controllers
                 {
                     cmd3 = "update public.barcode set \"barcode1\" = '" + obj.barcode1 + "', \"barcode2\" = '" + obj.barcode2 + "', \"barcode3\" = '" + obj.barcode3 + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"barcodeID\" = " + obj.barcodeID + ";";
 
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected2 = con.Execute(cmd3);
                     }
 
                     cmd4 = "update public.\"productPrice\" set \"costPrice\" = '" + obj.costPrice + "', \"salePrice\" = '" + obj.salePrice + "', \"retailPrice\" = '" + obj.retailPrice + "', \"wholeSalePrice\" = '" + obj.wholeSalePrice + "', \"gst\" = '" + obj.gst + "', \"et\" = '" + obj.et + "', \"packing\" = '" + obj.packingQty + "', \"packingSalePrice\" = '" + obj.packingSalePrice + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"pPriceID\" = " + obj.pPriceID + ";";
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected3 = con.Execute(cmd4);
                     }
@@ -362,7 +388,11 @@ namespace posCoreModuleApi.Controllers
 
                 cmd2 = "update public.\"productPrice\" set \"costPrice\" = '" + obj.costPrice + "', \"salePrice\" = '" + obj.salePrice + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"productID\" = " + obj.productID + ";";
 
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                 {
                     rowAffected2 = con.Execute(cmd2);
                 }
@@ -395,7 +425,11 @@ namespace posCoreModuleApi.Controllers
 
                 cmd = "update product set  \"applicationedoc\" = '" + obj.applicationEDocPath + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"productID\" = " + obj.productID + ";";
 
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                 {
                     rowAffected = con.Execute(cmd);
                 }
@@ -438,10 +472,14 @@ namespace posCoreModuleApi.Controllers
 
                 cmd = "update product set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"productID\" = " + obj.productID + ";";
 
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
-                {
-                    rowAffected = con.Execute(cmd);
-                }
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                        rowAffected = con.Execute(cmd);
+                        }
+                    }
 
                 if (rowAffected > 0)
                 {

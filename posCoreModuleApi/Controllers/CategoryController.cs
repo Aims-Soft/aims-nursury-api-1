@@ -18,16 +18,18 @@ namespace posCoreModuleApi.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        private readonly dapperQuery _dapperQuery;
         private string cmd, cmd2;
-        private string subconStr;
+        public string saveConStr;
 
-        public CategoryController(IOptions<conStr> dbCon)
+        public CategoryController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            _dapperQuery = dapperQuery;
         }
 
         [HttpGet("getCategory")]
-        public IActionResult getCategory(int businessID,int companyID, int userID)
+        public IActionResult getCategory(int businessID,int companyID,int userID, int moduleId)
         {
             try
             {
@@ -36,8 +38,7 @@ namespace posCoreModuleApi.Controllers
                 }else{
                     cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 and \"parentCategoryID\" is null AND \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + "";
                 }
-                subconStr = userCredentials.FindMe(userID);
-                var appMenu = dapperQuery.StrConQry<Category>(cmd, subconStr);
+                var appMenu = _dapperQuery.StrConQry<Category>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -48,7 +49,7 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getSubCategory")]
-        public IActionResult getSubCategory(int catID, int companyID, int businessID,int userID)
+        public IActionResult getSubCategory(int catID, int companyID, int businessID,int userID, int moduleId)
         {
             try
             {
@@ -71,8 +72,7 @@ namespace posCoreModuleApi.Controllers
                         cmd = "select * from public.\"category\" where companyid = "+ companyID +" AND businessid = " + businessID + " AND \"isDeleted\"::int = 0 and \"parentCategoryID\" = " + catID + ";";
                     }
                 }
-                subconStr = userCredentials.FindMe(userID);
-                var appMenu = dapperQuery.StrConQry<Category>(cmd, subconStr);
+                var appMenu = _dapperQuery.StrConQry<Category>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -100,8 +100,7 @@ namespace posCoreModuleApi.Controllers
 
                 List<Category> appMenuCategory = new List<Category>();
                 cmd2 = "select \"categoryName\" from category where \"isDeleted\"::int = 0 and \"parentCategoryID\" is null and \"categoryName\" = '" + obj.categoryName + "' AND \"businessid\" = " + obj.businessID + " AND \"companyid\" = " + obj.companyID + "";
-                subconStr = userCredentials.FindMe(obj.userID);
-                appMenuCategory = (List<Category>)dapperQuery.StrConQry<Category>(cmd2, subconStr);
+                appMenuCategory = (List<Category>)_dapperQuery.StrConQry<Category>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuCategory.Count > 0)
                     category = appMenuCategory[0].categoryName;
@@ -124,7 +123,11 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -170,11 +173,15 @@ namespace posCoreModuleApi.Controllers
                 var response = "";
 
                 cmd = "update public.category set \"isDeleted\" = B'1', \"modifiefOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"categoryID\" = " + obj.categoryID + ";";
-                subconStr = userCredentials.FindMe(obj.userID);
-                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
-                {
-                    rowAffected = con.Execute(cmd);
-                }
+
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                        rowAffected = con.Execute(cmd);
+                        }
+                    }
 
                 if (rowAffected > 0)
                 {
@@ -212,9 +219,7 @@ namespace posCoreModuleApi.Controllers
 
                 List<Category> appMenuCategory = new List<Category>();
                 cmd2 = "select \"categoryName\" from category where \"isDeleted\"::int = 0 and \"parentCategoryID\" ='" + obj.parentCategoryID + "' and \"categoryName\" = '" + obj.categoryName + "'";
-                subconStr = userCredentials.FindMe(obj.userID);
-               
-                appMenuCategory = (List<Category>)dapperQuery.StrConQry<Category>(cmd2, subconStr);
+                appMenuCategory = (List<Category>)_dapperQuery.StrConQry<Category>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuCategory.Count > 0)
                     category = appMenuCategory[0].categoryName;
@@ -238,7 +243,11 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }

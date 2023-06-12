@@ -8,6 +8,7 @@ namespace posCoreModuleApi.Entities
     {
         public string invoiceDate { get; set; }
         public int invoiceNo { get; set; }
+        public int moduleId { get; set; }
         public int productID { get; set; }
         public int locationID { get; set; }
         public float costPrice { get; set; }

@@ -18,21 +18,18 @@ namespace posCoreModuleApi.Controllers
     public class PartyController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
-        // private dynamicString _dynamic;
-        // private IDynamicString _dynamicString;
-        private string cmd, cmd2;
-        private string subconStr;
-        
-        public PartyController(IOptions<conStr> dbCon)
+        private readonly dapperQuery _dapperQuery;
+        public string cmd, cmd2;
+        public string saveConStr;
+
+        public PartyController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
-            // _dynamic = dynamic;
-            // _dynamicString = dynamicString;
-            // _subconStr = SubdbCon;
+            _dapperQuery = dapperQuery;
         }
 
         [HttpGet("getParty")]
-        public IActionResult getParty(int businessID,int companyID,int userID)
+        public IActionResult getParty(int businessID,int companyID,int userID, int moduleId)
         {
             try
             {
@@ -44,9 +41,7 @@ namespace posCoreModuleApi.Controllers
                 {
                     cmd = "SELECT * FROM view_party where \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + " order by \"partyID\" desc";
                 }
-                subconStr = userCredentials.FindMe(userID);
-
-                var appMenu = dapperQuery.StrConQry<Party>(cmd, subconStr);
+                var appMenu = _dapperQuery.StrConQry<Party>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -56,7 +51,7 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getAllParties")]
-        public IActionResult getAllParties(int businessID,int companyID,int userID)
+        public IActionResult getAllParties(int businessID,int companyID,int userID, int moduleId)
         {
             try
             {
@@ -69,8 +64,7 @@ namespace posCoreModuleApi.Controllers
                     cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + "";
                 }
                 
-                subconStr = userCredentials.FindMe(userID);
-                var appMenu = dapperQuery.StrConQry<Party>(cmd, subconStr);
+                var appMenu = _dapperQuery.StrConQry<Party>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -97,8 +91,7 @@ namespace posCoreModuleApi.Controllers
 
                 List<Party> appMenuParty = new List<Party>();
                 cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND (\"type\" = 'supplier' OR \"type\" = 'customer')";
-                subconStr = userCredentials.FindMe(obj.userID);
-                appMenuParty = (List<Party>)dapperQuery.StrConQry<Party>(cmd2, subconStr);
+                appMenuParty = (List<Party>)_dapperQuery.StrConQry<Party>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuParty.Count > 0)
                     cnic = appMenuParty[0].cnic;
@@ -121,7 +114,12 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -167,12 +165,17 @@ namespace posCoreModuleApi.Controllers
                 var response = "";
 
                 cmd = "update public.\"party\" set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"partyID\" = " + obj.partyID + ";";
+                    
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                        rowAffected = con.Execute(cmd);
+                        }
+                    }
                 
-                subconStr = userCredentials.FindMe(obj.userID);
-                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
-                {
-                    rowAffected = con.Execute(cmd);
-                }
+                
 
                 if (rowAffected > 0)
                 {
@@ -190,101 +193,6 @@ namespace posCoreModuleApi.Controllers
                 return Ok(e);
             }
 
-        }
-
-
-        //Short party for customer
-         [HttpPost("saveCustomerSale")]
-        public IActionResult saveCustomerSale(CustomerSaleCreation obj)
-        {
-            try
-            {
-                DateTime curDate = DateTime.Today;
-
-                DateTime curTime = DateTime.Now;
-
-                var time = curTime.ToString("HH:mm");
-
-                int rowAffected = 0;
-                var response = "";
-                var found = false;
-                var cnic = "";
-
-                List<CustomerSale> appMenuParty = new List<CustomerSale>();
-                cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND (\"type\" = 'customer')";
-                subconStr = userCredentials.FindMe(obj.userID);
-                appMenuParty = (List<CustomerSale>)dapperQuery.StrConQry<CustomerSale>(cmd2, subconStr);
-
-                if (appMenuParty.Count > 0)
-                    cnic = appMenuParty[0].cnic;
-
-                if (obj.partyID == 0)
-                {
-                    if (cnic == "")
-                    {
-                        cmd = "insert into public.\"party\" (\"partyName\", \"mobile\", \"type\",  \"cnic\", \"createdOn\", \"createdBy\", \"isDeleted\") values ( '" + obj.partyName + "', '" + obj.mobile + "', 'customer', '" + obj.cnic + "',  '" + curDate + "', " + obj.userID + ", B'0')";
-                    }
-                    else
-                    {
-                        found = true;
-                    }
-                }
-                else
-                {
-                    cmd = "update public.\"party\" set   \"partyName\" = '" + obj.partyName + "', \"mobile\" = '" + obj.mobile + "',  \"cnic\" = '" + obj.cnic + "',  \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"partyID\" = " + obj.partyID + ";";
-                }
-
-                if (found == false)
-                {
-                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
-                    {
-                        rowAffected = con.Execute(cmd);
-                    }
-                }
-
-                if (rowAffected > 0)
-                {
-                    response = "Success";
-                }
-                else
-                {
-                    if (found == true)
-                    {
-                        response = "CNIC already exist";
-                    }
-                    else
-                    {
-                        response = "Server Issue";
-                    }
-                }
-
-                return Ok(new { message = response });
-            }
-            catch (Exception e)
-            {
-                return Ok(e);
-            }
-
-        }
-
-
-        [HttpGet("getAllCustomer")]
-        public IActionResult getAllCustomer(int userID)
-        {
-            try
-            {
-               
-                cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"type\"='customer'  ";
-
-                subconStr = userCredentials.FindMe(userID);
-                
-                var appMenu = dapperQuery.StrConQry<CustomerSale>(cmd, subconStr);
-                return Ok(appMenu);
-            }
-            catch (Exception e)
-            {
-                return Ok(e);
-            }
         }
 
     }

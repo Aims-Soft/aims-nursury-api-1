@@ -7,6 +7,7 @@ namespace posCoreModuleApi.Entities
     public class InvoiceCreation
     {
         public int invoiceNo { get; set; }
+        public int moduleId { get; set; }
         public string invoiceDate { get; set; }
         public Nullable<int> partyID { get; set; }
         public int bankID { get; set; }

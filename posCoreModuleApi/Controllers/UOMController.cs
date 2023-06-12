@@ -18,20 +18,23 @@ namespace posCoreModuleApi.Controllers
     public class UOMController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        private readonly dapperQuery _dapperQuery;
         private string cmd;
+        public string saveConStr;
 
-        public UOMController(IOptions<conStr> dbCon)
+        public UOMController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            _dapperQuery = dapperQuery;
         }
 
         [HttpGet("getMeasurementUnit")]
-        public IActionResult getMeasurementUnit()
+        public IActionResult getMeasurementUnit(int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.\"measurementUnit\" where \"isDeleted\"::int = 0 ";
-                var appMenu = dapperQuery.Qry<MeasurementUnit>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<MeasurementUnit>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)

@@ -18,22 +18,23 @@ namespace posCoreModuleApi.Controllers
     public class BrandController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        private readonly dapperQuery _dapperQuery;
         private string cmd, cmd2;
-        private string subconStr;
+        public string saveConStr;
 
-        public BrandController(IOptions<conStr> dbCon)
+        public BrandController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            _dapperQuery = dapperQuery;
         }
 
         [HttpGet("getBrand")]
-        public IActionResult getBrand(int businessid,int companyid, int userID)
+        public IActionResult getBrand(int businessid,int companyid,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.\"brand\" where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
-                subconStr = userCredentials.FindMe(userID);
-                var appMenu = dapperQuery.StrConQry<Brand>(cmd, subconStr);
+                var appMenu = _dapperQuery.StrConQry<Brand>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -61,8 +62,7 @@ namespace posCoreModuleApi.Controllers
 
                 List<Brand> appMenuBrand = new List<Brand>();
                 cmd2 = "select \"brandName\" from brand where \"isDeleted\"::int = 0 and \"brandName\" = '" + obj.brandName + "' AND \"businessid\" = " + obj.businessid + " AND \"companyid\" = " + obj.companyid + "";
-                subconStr = userCredentials.FindMe(obj.userID);
-                appMenuBrand = (List<Brand>)dapperQuery.StrConQry<Brand>(cmd2, subconStr);
+                appMenuBrand = (List<Brand>)_dapperQuery.StrConQry<Brand>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuBrand.Count > 0)
                     brand = appMenuBrand[0].brandName;
@@ -85,7 +85,11 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -132,11 +136,14 @@ namespace posCoreModuleApi.Controllers
 
                 cmd = "update public.brand set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"brandID\" = " + obj.brandID + ";";
 
-                subconStr = userCredentials.FindMe(obj.userID);
-                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
-                {
-                    rowAffected = con.Execute(cmd);
-                }
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                        rowAffected = con.Execute(cmd);
+                        }
+                    }
 
                 if (rowAffected > 0)
                 {

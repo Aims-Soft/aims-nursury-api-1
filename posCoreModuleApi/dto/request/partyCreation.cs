@@ -7,6 +7,7 @@ namespace posCoreModuleApi.Entities
     public class PartyCreation
     {
         public int partyID { get; set; }
+        public int moduleId { get; set; }
         public int rootID { get; set; }
         public int cityID { get; set; }
         public string partyName { get; set; }

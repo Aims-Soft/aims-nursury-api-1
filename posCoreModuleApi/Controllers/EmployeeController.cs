@@ -18,16 +18,18 @@ namespace posCoreModuleApi.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        private readonly dapperQuery _dapperQuery;
         private string cmd, cmd2;
-        private string subconStr;
+        public string saveConStr;
 
-        public EmployeeController(IOptions<conStr> dbCon)
+        public EmployeeController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            _dapperQuery = dapperQuery;
         }
 
         [HttpGet("getEmployee")]
-        public IActionResult getEmployee(int businessID,int companyID,int userID)
+        public IActionResult getEmployee(int businessID,int companyID,int userID, int moduleId)
         {
             try
             {
@@ -36,8 +38,7 @@ namespace posCoreModuleApi.Controllers
                 }else{
                     cmd = "SELECT * FROM view_employee where \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + " order by \"partyID\" desc";
                 }
-                subconStr = userCredentials.FindMe(userID);
-                var appMenu = dapperQuery.StrConQry<Party>(cmd, subconStr);
+                var appMenu = _dapperQuery.StrConQry<Party>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -64,8 +65,7 @@ namespace posCoreModuleApi.Controllers
 
                 List<Party> appMenuEmployee = new List<Party>();
                 cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND \"type\" = 'Employee'";
-                subconStr = userCredentials.FindMe(obj.userID);
-                appMenuEmployee = (List<Party>)dapperQuery.StrConQry<Party>(cmd2, subconStr);
+                appMenuEmployee = (List<Party>)_dapperQuery.StrConQry<Party>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuEmployee.Count > 0)
                     employeeName = appMenuEmployee[0].cnic;
@@ -88,7 +88,12 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }

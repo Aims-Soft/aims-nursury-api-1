@@ -18,16 +18,18 @@ namespace posCoreModuleApi.Controllers
     public class DesignationController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        private readonly dapperQuery _dapperQuery;
         private string cmd, cmd2;
-        private string subconStr;
+        public string saveConStr;
 
-        public DesignationController(IOptions<conStr> dbCon)
+        public DesignationController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            _dapperQuery = dapperQuery;
         }
 
         [HttpGet("getDesignation")]
-        public IActionResult getDesignation(int businessID, int companyID,int userID)
+        public IActionResult getDesignation(int businessID, int companyID,int userID, int moduleId)
         {
             try
             {
@@ -36,8 +38,7 @@ namespace posCoreModuleApi.Controllers
                 }else{
                 cmd = "SELECT * FROM public.designation where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + "";
                 }
-                subconStr = userCredentials.FindMe(userID);
-                var appMenu = dapperQuery.StrConQry<Designation>(cmd, subconStr);
+                var appMenu = _dapperQuery.StrConQry<Designation>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -65,8 +66,7 @@ namespace posCoreModuleApi.Controllers
 
                 List<Designation> appMenuDesignation = new List<Designation>();
                 cmd2 = "select \"desginationName\" from designation where \"isDeleted\"::int = 0 and \"desginationName\" = '" + obj.designationName + "' and \"businessid\" = " + obj.businessid + " AND \"companyid\" = " + obj.companyid + "";
-                subconStr = userCredentials.FindMe(obj.userID);
-                appMenuDesignation = (List<Designation>)dapperQuery.StrConQry<Designation>(cmd2, subconStr);
+                appMenuDesignation = (List<Designation>)_dapperQuery.StrConQry<Designation>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuDesignation.Count > 0)
                     designation = appMenuDesignation[0].desginationName;
@@ -90,7 +90,12 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -137,12 +142,14 @@ namespace posCoreModuleApi.Controllers
 
                 cmd = "update public.designation set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"designationID\" = " + obj.designationID + ";";
 
-                subconStr = userCredentials.FindMe(obj.userID);
-
-                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
-                {
-                    rowAffected = con.Execute(cmd);
-                }
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                        rowAffected = con.Execute(cmd);
+                        }
+                    }
 
                 if (rowAffected > 0)
                 {

@@ -7,6 +7,7 @@ namespace posCoreModuleApi.Entities
     public class PaymentCreation
     {
         public int invoiceNo { get; set; }
+        public int moduleId { get; set; }
         public int invoiceDetailID { get; set; }
         public int partyID { get; set; }
         public int categoryID { get; set; }

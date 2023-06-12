@@ -18,20 +18,23 @@ namespace posCoreModuleApi.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        private readonly dapperQuery _dapperQuery;
         private string cmd, cmd2;
+        public string saveConStr;
 
-        public RouteController(IOptions<conStr> dbCon)
+        public RouteController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            _dapperQuery = dapperQuery;
         }
 
         [HttpGet("getRoute")]
-        public IActionResult getRoute(int businessid,int companyid)
+        public IActionResult getRoute(int businessid,int companyid,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.\"root\" where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
-                var appMenu = dapperQuery.Qry<Route>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<Route>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -59,7 +62,7 @@ namespace posCoreModuleApi.Controllers
 
                 List<Route> appMenuRoute = new List<Route>();
                 cmd2 = "select \"rootName\" from root where \"isDeleted\"::int = 0 and \"rootName\" = '" + obj.rootName + "' AND \"businessid\" = " + obj.businessid + " AND \"companyid\" = " + obj.companyid + "";
-                appMenuRoute = (List<Route>)dapperQuery.QryResult<Route>(cmd2, _dbCon);
+                appMenuRoute = (List<Route>)_dapperQuery.StrConQry<Route>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuRoute.Count > 0)
                     route = appMenuRoute[0].rootName;
@@ -82,7 +85,13 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
+
+                     if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -129,10 +138,15 @@ namespace posCoreModuleApi.Controllers
 
                 cmd = "update public.root set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedby\" = " + obj.userID + " where \"rootID\" = " + obj.rootID + ";";
 
-                using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))
-                {
-                    rowAffected = con.Execute(cmd);
-                }
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                        rowAffected = con.Execute(cmd);
+                        }
+                    }
+
 
                 if (rowAffected > 0)
                 {

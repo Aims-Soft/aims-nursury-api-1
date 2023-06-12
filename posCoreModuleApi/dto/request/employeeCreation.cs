@@ -7,6 +7,7 @@ namespace posCoreModuleApi.Entities
     public class EmployeeCreation
     {
         public int partyID { get; set; }
+        public int moduleId { get; set; }
         public int designationID { get; set; }
         public int branchID { get; set; }
         public int cityID { get; set; }

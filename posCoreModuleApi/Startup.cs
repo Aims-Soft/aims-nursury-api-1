@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using posCoreModuleApi.Configuration;
+using posCoreModuleApi.Services;
 
 namespace posCoreModuleApi
 {
@@ -29,6 +30,7 @@ namespace posCoreModuleApi
         {
 
             services.Configure<conStr>(Configuration.GetSection("conStr"));
+            services.AddScoped<dapperQuery>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

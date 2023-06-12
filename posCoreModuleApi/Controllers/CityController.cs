@@ -18,22 +18,23 @@ namespace posCoreModuleApi.Controllers
     public class CityController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        private readonly dapperQuery _dapperQuery;
         private string cmd, cmd2;
-        private string subconStr;
+        public string saveConStr;
 
-        public CityController(IOptions<conStr> dbCon)
+        public CityController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            _dapperQuery = dapperQuery;
         }
 
         [HttpGet("getCity")]
-        public IActionResult getCity(int userID)
+        public IActionResult getCity(int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.\"city\" where \"isDeleted\"::int = 0 ";
-                subconStr = userCredentials.FindMe(userID);
-                var appMenu = dapperQuery.StrConQry<City>(cmd, subconStr);
+                var appMenu = _dapperQuery.StrConQry<City>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -58,8 +59,7 @@ namespace posCoreModuleApi.Controllers
 
                 List<City> appMenuCity = new List<City>();
                 cmd2 = "select \"cityName\" from city where \"isDeleted\"::int = 0 and \"cityName\" = '" + obj.cityName + "'";
-                subconStr = userCredentials.FindMe(obj.userID);
-                appMenuCity = (List<City>)dapperQuery.StrConQry<City>(cmd2, subconStr);
+                appMenuCity = (List<City>)_dapperQuery.StrConQry<City>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuCity.Count > 0)
                     city = appMenuCity[0].cityName;
@@ -85,7 +85,11 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
-                    using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
                         rowAffected = con.Execute(cmd);
                     }
@@ -131,11 +135,15 @@ namespace posCoreModuleApi.Controllers
                 var response = "";
 
                 cmd = "update public.city set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"cityID\" = " + obj.cityID + ";";
-                subconStr = userCredentials.FindMe(obj.userID);
-                using (NpgsqlConnection con = new NpgsqlConnection(subconStr))
-                {
-                    rowAffected = con.Execute(cmd);
-                }
+
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                        rowAffected = con.Execute(cmd);
+                        }
+                    }
 
                 if (rowAffected > 0)
                 {
