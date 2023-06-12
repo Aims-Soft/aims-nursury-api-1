@@ -12,27 +12,30 @@ using System.Collections.Generic;
 
 namespace reportApi.Controllers
 {
-
+ 
     [ApiController]
     [Route("[controller]")]
     public class FMISReportController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
+        private readonly dapperQuery _dapperQuery;
         private string cmd, cmd2;
+        public string saveConStr;
 
-        public FMISReportController(IOptions<conStr> dbCon)
+        public FMISReportController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
+            _dapperQuery = dapperQuery;
         }
         
         [HttpGet("getLedgerReport")]
-        public IActionResult getLedgerReport(int coaID, string fromDate, string toDate)
+        public IActionResult getLedgerReport(int coaID, string fromDate, string toDate,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.ledgerreport  where coaid = '" + coaID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
-                var appMenu = dapperQuery.Qry<Ledger>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<Ledger>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -42,13 +45,13 @@ namespace reportApi.Controllers
         }
 
         [HttpGet("getPartyLedgerReport")]
-        public IActionResult getPartyLedgerReport(int partyID, string fromDate, string toDate)
+        public IActionResult getPartyLedgerReport(int partyID, string fromDate, string toDate,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
-                var appMenu = dapperQuery.Qry<PartyLedger>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -58,13 +61,13 @@ namespace reportApi.Controllers
         }
 
         [HttpGet("getPresentStock")]
-        public IActionResult getPresentStock(int partyID, string fromDate, string toDate)
+        public IActionResult getPresentStock(int partyID, string fromDate, string toDate,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
-                var appMenu = dapperQuery.Qry<PartyLedger>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -74,13 +77,13 @@ namespace reportApi.Controllers
         }
         
         [HttpGet("getDailyCategorySale")]
-        public IActionResult getDailyCategorySale(int partyID, string fromDate, string toDate)
+        public IActionResult getDailyCategorySale(int partyID, string fromDate, string toDate,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
-                var appMenu = dapperQuery.Qry<PartyLedger>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -89,13 +92,13 @@ namespace reportApi.Controllers
             }
         }
         [HttpGet("getDailySales")]
-        public IActionResult getDailySales(string startDate,string endDate)
+        public IActionResult getDailySales(string startDate,string endDate,int userID, int moduleId)
         {
             try
             {
                 cmd = "SELECT * FROM public.\"view_dailySales\" WHERE \"view_dailySales\".\"invoiceDate\" BETWEEN '" + startDate + "' AND '" + endDate + "'";
 
-                var appMenu = dapperQuery.Qry<DailySales>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<DailySales>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -104,13 +107,13 @@ namespace reportApi.Controllers
             }
         }
         [HttpGet("getDailySalesByOrder")]
-        public IActionResult getDailySalesByOrder(string startDate,string endDate)
+        public IActionResult getDailySalesByOrder(string startDate,string endDate,int userID, int moduleId)
         {
             try
             {
                 cmd = "SELECT * FROM public.\"view_dailySalesbyOrder\" WHERE \"view_dailySalesbyOrder\".\"invoiceDate\" BETWEEN '" + startDate + "' AND '" + endDate + "'";
 
-                var appMenu = dapperQuery.Qry<DailySalesByOrder>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<DailySalesByOrder>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -119,13 +122,13 @@ namespace reportApi.Controllers
             }
         }
         [HttpGet("getStockInStockOut")]
-        public IActionResult getStockInStockOut(string invDate)
+        public IActionResult getStockInStockOut(string invDate,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.\"productStockInStockOut\"('"+invDate+"')";
 
-                var appMenu = dapperQuery.Qry<StockInStockOut>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<StockInStockOut>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -135,13 +138,13 @@ namespace reportApi.Controllers
         }
         
         [HttpGet("getPeriodicSale")]
-        public IActionResult getPeriodicSale(int partyID, string fromDate, string toDate)
+        public IActionResult getPeriodicSale(int partyID, string fromDate, string toDate,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
-                var appMenu = dapperQuery.Qry<PartyLedger>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -151,13 +154,13 @@ namespace reportApi.Controllers
         }
         
         [HttpGet("getPeriodicCategorySale")]
-        public IActionResult getPeriodicCategorySale(int partyID, string fromDate, string toDate)
+        public IActionResult getPeriodicCategorySale(int partyID, string fromDate, string toDate,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
-                var appMenu = dapperQuery.Qry<PartyLedger>(cmd, _dbCon);
+                var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
