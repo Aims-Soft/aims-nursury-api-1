@@ -33,8 +33,8 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                if(companyID == 0 && businessID == 0){
-                    cmd = "SELECT * FROM public.designation where \"isDeleted\"::int = 0";
+                if(companyID == 0 && businessID != 0){
+                    cmd = "SELECT * FROM public.designation where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + "";
                 }else{
                 cmd = "SELECT * FROM public.designation where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + "";
                 }

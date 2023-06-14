@@ -18,6 +18,7 @@ namespace reportApi.Entities
         public string instrumentno { get; set; }
         public string instrumentdate { get; set; }
         public string description { get; set; }
+        public int branchID { get; set; }
         public float debit { get; set; }
         public float credit { get; set; }
     }

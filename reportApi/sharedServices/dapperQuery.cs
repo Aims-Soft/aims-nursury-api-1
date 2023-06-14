@@ -62,7 +62,7 @@ namespace reportApi.Services
                 return con.Query<T>(sql).ToList();
             }
         }
-         
+
         public string FindMe(int userID,int moduleId)
 
         {
@@ -73,20 +73,22 @@ namespace reportApi.Services
                 
                 // var user = (List<dynamicResponse>)FindMeQuery<dynamicResponse>(cmd, _dbCon); // assuming _dapper is properly instantiated
                 List<dynamicResponse> user = new List<dynamicResponse>(FindMeQuery<dynamicResponse>(cmd));
-
-                
-                // var user = FindMeQuery<dynamicResponse>(cmd,_dbCon);
-
                 var abc = "Host="+user[0].instanceName+";Database="+user[0].dbName+";Port=5432;Username="+user[0].userName+";Password="+user[0].credentials+"";
 
-                if (user.Count > 0)
+    
+                if (abc.Length == 0)
                 {
+                var cmd2 = "Select * from view_getcompanybusiness where \"userID\" = "+userID+" and \"applicationModuleID\" = "+moduleId+""; // corrected query string
+                List<dynamicResponse> user2 = new List<dynamicResponse>(FindMeQuery<dynamicResponse>(cmd2));
+                abc = "Host="+user[0].instanceName+";Database="+user[0].dbName+";Port=5432;Username="+user[0].userName+";Password="+user[0].credentials+"";
+                
+                }
+
+                // var abc = "Host="+user[0].instanceName+";Database="+user[0].dbName+";Port=5432;Username="+user[0].userName+";Password="+user[0].credentials+"";
+
+                
                     return abc; 
-                }
-                else
-                {
-                    return ""; // or return an appropriate value when no results are found
-                }
+            
             }
             catch (Exception e)
             {
@@ -94,6 +96,39 @@ namespace reportApi.Services
                 return null; // or return an appropriate value when an exception occurs
             }
         }
+
+         
+        // public string FindMe(int userID,int moduleId)
+
+        // {
+        //     try
+        //     {
+        //         var cmd = "Select * from view_getcompany where \"userID\" = "+userID+" and \"applicationModuleID\" = "+moduleId+""; // corrected query string
+
+                
+        //         // var user = (List<dynamicResponse>)FindMeQuery<dynamicResponse>(cmd, _dbCon); // assuming _dapper is properly instantiated
+        //         List<dynamicResponse> user = new List<dynamicResponse>(FindMeQuery<dynamicResponse>(cmd));
+
+                
+        //         // var user = FindMeQuery<dynamicResponse>(cmd,_dbCon);
+
+        //         var abc = "Host="+user[0].instanceName+";Database="+user[0].dbName+";Port=5432;Username="+user[0].userName+";Password="+user[0].credentials+"";
+
+        //         if (user.Count > 0)
+        //         {
+        //             return abc; 
+        //         }
+        //         else
+        //         {
+        //             return ""; // or return an appropriate value when no results are found
+        //         }
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         // Handle exception
+        //         return null; // or return an appropriate value when an exception occurs
+        //     }
+        // }
 
         public static string saveImageFile(string regPath, string name, string binData, string ext)
         {

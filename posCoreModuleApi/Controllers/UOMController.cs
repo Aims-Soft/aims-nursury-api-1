@@ -29,11 +29,11 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getMeasurementUnit")]
-        public IActionResult getMeasurementUnit(int userID, int moduleId)
+        public IActionResult getMeasurementUnit(int businessID,int userID, int moduleId)
         {
             try
             {
-                cmd = "select * from public.\"measurementUnit\" where \"isDeleted\"::int = 0 ";
+                cmd = "select * from public.\"measurementUnit\" where \"isDeleted\"::int = 0  and \"businessid\" = " + businessID + "";
                 var appMenu = _dapperQuery.StrConQry<MeasurementUnit>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }

@@ -30,11 +30,11 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getSaleReturn")]
-        public IActionResult getSaleReturn(int invoiceNo,int userID, int moduleId)
+        public IActionResult getSaleReturn(int branchId,int invoiceNo,int userID, int moduleId)
         {
             try
             {
-                cmd = "SELECT id.\"productID\", sum(case when i.\"invoiceType\" = 'SR' then id.qty * (-1) else id.qty end )as qty FROM invoice i JOIN \"invoiceDetail\" id ON id.\"invoiceNo\" = i.\"invoiceNo\" where i.\"invoiceNo\" = " + invoiceNo + " or i.\"refInvoiceNo\" = " + invoiceNo + " and id.\"productID\" is not null GROUP By id.\"productID\"";
+                cmd = "SELECT id.\"productID\", sum(case when i.\"invoiceType\" = 'SR' then id.qty * (-1) else id.qty end )as qty FROM invoice i JOIN \"invoiceDetail\" id ON id.\"invoiceNo\" = i.\"invoiceNo\" where i.\"invoiceNo\" = " + invoiceNo + " or i.\"refInvoiceNo\" = " + invoiceNo + " and i.\"branchId\" = " + branchId + " and id.\"productID\" is not null GROUP By id.\"productID\"";
 
                 // cmd = "select * from \"view_saleReturn\" where \"invoiceNo\" = " + invoiceNo + " and \"isDeleted\"::int = 0 and \"productID\" is not null";
                 var appMenu = _dapperQuery.StrConQry<SaleReturn>(cmd,userID,moduleId);

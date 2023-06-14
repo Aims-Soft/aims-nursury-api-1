@@ -14,5 +14,6 @@ namespace reportApi.Entities
         public int salePrice { get; set; }
         public int margin { get; set; }
         public string invoiceType { get; set; }
+        public int branchID { get; set; }
     }
 }

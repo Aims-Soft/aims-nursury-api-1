@@ -32,9 +32,9 @@ namespace posCoreModuleApi.Controllers
         public IActionResult getPayments(int businessID,int companyID,int userID, int moduleId)
         {
             try
-            {   if (businessID == 0 && companyID == 0)
+            {   if (businessID != 0 && companyID == 0)
                 {
-                    cmd = "select * from view_payment ORDER BY \"invoiceNo\" DESC";    
+                    cmd = "select * from view_payment where \"businessid\" = " + businessID + " ORDER BY \"invoiceNo\" DESC";    
                 }
                 else
                 {
@@ -50,11 +50,11 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getPaymentDetail")]
-        public IActionResult getPaymentDetail(int invoiceNo,int userID, int moduleId)
+        public IActionResult getPaymentDetail(int branchID,int invoiceNo,int userID, int moduleId)
         {
             try
             {
-                cmd = "select \"invoiceNo\", debit, credit, \"coaID\" from \"invoiceDetail\" where \"isDeleted\"::int = 0 and \"invoiceNo\" = " + invoiceNo + " ";
+                cmd = "select \"invoiceNo\", debit, credit, \"coaID\" from \"invoiceDetail\" where \"branchId\" = " + branchID + " and  \"isDeleted\"::int = 0 and \"invoiceNo\" = " + invoiceNo + " ";
                 var appMenu = _dapperQuery.StrConQry<PaymentDetail>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }

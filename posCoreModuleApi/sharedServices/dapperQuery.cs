@@ -72,20 +72,22 @@ namespace posCoreModuleApi.Services
                 
                 // var user = (List<dynamicResponse>)FindMeQuery<dynamicResponse>(cmd, _dbCon); // assuming _dapper is properly instantiated
                 List<dynamicResponse> user = new List<dynamicResponse>(FindMeQuery<dynamicResponse>(cmd));
-
-                
-                // var user = FindMeQuery<dynamicResponse>(cmd,_dbCon);
-
                 var abc = "Host="+user[0].instanceName+";Database="+user[0].dbName+";Port=5432;Username="+user[0].userName+";Password="+user[0].credentials+"";
 
-                if (user.Count > 0)
+    
+                if (abc.Length == 0)
                 {
+                var cmd2 = "Select * from view_getcompanybusiness where \"userID\" = "+userID+" and \"applicationModuleID\" = "+moduleId+""; // corrected query string
+                List<dynamicResponse> user2 = new List<dynamicResponse>(FindMeQuery<dynamicResponse>(cmd2));
+                abc = "Host="+user[0].instanceName+";Database="+user[0].dbName+";Port=5432;Username="+user[0].userName+";Password="+user[0].credentials+"";
+                
+                }
+
+                // var abc = "Host="+user[0].instanceName+";Database="+user[0].dbName+";Port=5432;Username="+user[0].userName+";Password="+user[0].credentials+"";
+
+                
                     return abc; 
-                }
-                else
-                {
-                    return ""; // or return an appropriate value when no results are found
-                }
+            
             }
             catch (Exception e)
             {

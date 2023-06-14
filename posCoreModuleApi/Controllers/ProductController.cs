@@ -33,9 +33,9 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {   
-                if (businessID == 0 && companyID == 0)
+                if (businessID != 0 && companyID == 0)
                 {
-                    cmd = "SELECT * FROM view_product order by \"productID\" desc";
+                    cmd = "SELECT * FROM view_product where \"businessid\" = " + businessID + " order by \"productID\" desc";
                 }
                 else
                 {
@@ -136,9 +136,9 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                if (businessID == 0 && companyID == 0)
+                if (businessID != 0 && companyID == 0)
                 {
-                    cmd = "SELECT * FROM view_product where \"categoryID\" = " + categoryID + " order by \"productID\" desc";
+                    cmd = "SELECT * FROM view_product where \"categoryID\" = " + categoryID + " AND \"businessid\" = " + businessID + " order by \"productID\" desc";
                 }
                 else
                 {

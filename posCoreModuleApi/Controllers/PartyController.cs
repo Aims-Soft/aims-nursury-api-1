@@ -29,17 +29,17 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getParty")]
-        public IActionResult getParty(int businessID,int companyID,int userID, int moduleId)
+        public IActionResult getParty(int branchID,int companyID,int userID, int moduleId)
         {
             try
             {
-                if (businessID == 0 && companyID == 0)
+                if (branchID != 0 && companyID == 0)
                 {
-                    cmd = "SELECT * FROM view_party order by \"partyID\" desc";
+                    cmd = "SELECT * FROM view_party where \"branchID\" = " + branchID + " order by \"partyID\" desc";
                 }
                 else
                 {
-                    cmd = "SELECT * FROM view_party where \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + " order by \"partyID\" desc";
+                    cmd = "SELECT * FROM view_party where \"branchID\" = " + branchID + " and \"companyid\" = " + companyID + " order by \"partyID\" desc";
                 }
                 var appMenu = _dapperQuery.StrConQry<Party>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -51,17 +51,17 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getAllParties")]
-        public IActionResult getAllParties(int businessID,int companyID,int userID, int moduleId)
+        public IActionResult getAllParties(int branchID,int companyID,int userID, int moduleId)
         {
             try
             {
-                if (businessID == 0 && companyID == 0)
+                if (branchID != 0 && companyID == 0)
                 {
-                    cmd = "select * from public.party where \"isDeleted\"::int = 0 order by \"partyID\" desc";
+                    cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + "  order by \"partyID\" desc";
                 }
                 else
                 {
-                    cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + "";
+                    cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + " and \"companyid\" = " + companyID + "";
                 }
                 
                 var appMenu = _dapperQuery.StrConQry<Party>(cmd,userID,moduleId);

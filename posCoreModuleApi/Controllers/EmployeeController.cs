@@ -33,8 +33,8 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                if(companyID == 0 && businessID == 0){
-                    cmd = "SELECT * FROM view_employee order by \"partyID\" desc";
+                if(companyID == 0 && businessID != 0){
+                    cmd = "SELECT * FROM view_employee where \"businessid\" = " + businessID + " order by \"partyID\" desc";
                 }else{
                     cmd = "SELECT * FROM view_employee where \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + " order by \"partyID\" desc";
                 }

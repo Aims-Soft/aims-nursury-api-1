@@ -33,12 +33,12 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                if(companyID == 0 && businessID == 0){
-                    cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 and \"parentCategoryID\" is null";
+                if(companyID == 0 && businessID != 0){
+                    cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + "  and \"parentCategoryID\" is null";
                 }else{
                     cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 and \"parentCategoryID\" is null AND \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + "";
                 }
-                var appMenu = _dapperQuery.StrConQry<Category>(cmd,userID,moduleId);
+                var appMenu = _dapperQuery.StrConQry<Category>(cmd,userID,moduleId); 
                 return Ok(appMenu);
             }
             catch (Exception e)
@@ -53,14 +53,14 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                if(companyID == 0 && businessID == 0){
+                if(companyID == 0 && businessID != 0){
                     if (catID == 0)
                     {
-                        cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 and \"parentCategoryID\"  is not null";
+                        cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 AND businessid = " + businessID + " and \"parentCategoryID\"  is not null";
                     }
                     else
                     {
-                        cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 and \"parentCategoryID\" = " + catID + ";";
+                        cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 AND businessid = " + businessID + " and \"parentCategoryID\" = " + catID + ";";
                     }
                 }else{
                     if (catID == 0)

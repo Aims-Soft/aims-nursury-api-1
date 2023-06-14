@@ -10,6 +10,8 @@ namespace reportApi.Entities
         public string userName { get; set; }
         public string credentials { get; set; }
         public string dbName { get; set; }
+        public int branchID { get; set; }
+        public int businessID { get; set; }
         
     }
 }
