@@ -33,7 +33,7 @@ namespace reportApi.Controllers
         {
             try
             {
-                cmd = "select * from public.ledgerreport  where coaid = '" + coaID + "' and \"ledgerreport\".\"branchID\" = " + branchID + " and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+                cmd = "select * from public.ledgerreport  where coaid = '" + coaID + "' and \"ledgerreport\".\"branchid\" = " + branchID + " and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
                 var appMenu = _dapperQuery.StrConQry<Ledger>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -49,7 +49,7 @@ namespace reportApi.Controllers
         {
             try
             {
-                cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and \"partyledgerview\".\"branchID\" = " + branchID + " and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+                cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and \"partyledgerview\".\"branchid\" = " + branchID + " and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
                 var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -65,7 +65,7 @@ namespace reportApi.Controllers
         {
             try
             {
-                cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and \"partyledgerview\".\"branchID\" = " + branchID + " and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+                cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and \"partyledgerview\".\"branchid\" = " + branchID + " and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
                 var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -81,7 +81,7 @@ namespace reportApi.Controllers
         {
             try
             {
-                cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and \"partyledgerview\".\"branchID\" = " + branchID + "  and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+                cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and \"partyledgerview\".\"branchid\" = " + branchID + "  and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
                 var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -111,7 +111,7 @@ namespace reportApi.Controllers
         {
             try
             {
-                cmd = "SELECT * FROM public.\"view_dailySalesbyOrder\" WHERE \"view_dailySalesbyOrder\".\"branchID\" = " + branchID + " and \"view_dailySalesbyOrder\".\"invoiceDate\" BETWEEN '" + startDate + "' AND '" + endDate + "'";
+                cmd = "SELECT * FROM public.\"view_dailySalesbyOrder\" WHERE \"view_dailySalesbyOrder\".\"branchid\" = " + branchID + " and \"view_dailySalesbyOrder\".\"invoiceDate\" BETWEEN '" + startDate + "' AND '" + endDate + "'";
 
                 var appMenu = _dapperQuery.StrConQry<DailySalesByOrder>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -142,7 +142,7 @@ namespace reportApi.Controllers
         {
             try
             {
-                cmd = "select * from public.partyledgerview  where branchId = " + branchID + " and partyledgerview.partyid = '" + partyID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+                cmd = "select * from public.partyledgerview  where \"partyledgerview\".\"branchid\" = " + branchID + " and partyledgerview.partyid = '" + partyID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
                 var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -158,7 +158,7 @@ namespace reportApi.Controllers
         {
             try
             {
-                cmd = "select * from public.partyledgerview  where branchId = " + branchID + " and partyledgerview.partyid = '" + partyID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+                cmd = "select * from public.partyledgerview  where \"partyledgerview\".\"branchid\" = " + branchID + " and partyledgerview.partyid = '" + partyID + "' and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
                 var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
