@@ -195,5 +195,99 @@ namespace posCoreModuleApi.Controllers
 
         }
 
+        [HttpPost("saveCustomerSale")]
+        public IActionResult saveCustomerSale(CustomerCreation obj)
+        {
+            try
+            {
+                DateTime curDate = DateTime.Today;
+
+                DateTime curTime = DateTime.Now;
+
+                var time = curTime.ToString("HH:mm");
+
+                int rowAffected = 0;
+                var response = "";
+                var found = false;
+                var cnic = "";
+
+                List<Party> appMenuParty = new List<Party>();
+                cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND (\"type\" = 'customer')";
+                appMenuParty = (List<Party>)_dapperQuery.StrConQry<Party>(cmd2, obj.userID,obj.moduleId);
+
+                if (appMenuParty.Count > 0)
+                    cnic = appMenuParty[0].cnic;
+
+                if (obj.partyID == 0)
+                {
+                    if (cnic == "")
+                    {
+                        cmd = "insert into public.\"party\" (\"partyName\", \"mobile\", \"type\", \"cnic\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + obj.partyName + "', '" + obj.mobile + "', 'customer', '" + obj.cnic + "', '" + curDate + "', " + obj.userID + ", B'0')";
+                    }
+                    else
+                    {
+                        found = true;
+                    }
+                }
+                else
+                {
+                    cmd = "update public.\"party\" set \"partyName\" = '" + obj.partyName + "', \"mobile\" = '" + obj.mobile + "', \"cnic\" = '" + obj.cnic + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"partyID\" = " + obj.partyID + ";";
+                }
+
+                if (found == false)
+                {
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    {
+                        rowAffected = con.Execute(cmd);
+                    }
+                }
+
+                if (rowAffected > 0)
+                {
+                    response = "Success";
+                }
+                else
+                {
+                    if (found == true)
+                    {
+                        response = "CNIC already exist";
+                    }
+                    else
+                    {
+                        response = "Server Issue";
+                    }
+                }
+
+                return Ok(new { message = response });
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
+
+        [HttpGet("getAllCustomer")]
+        public IActionResult getAllCustomer(int userID, int moduleId)
+        {
+            try
+            {
+            
+                    cmd = "select * from public.party where \"isDeleted\"::int = 0 and \"type\" = 'customer' order by \"partyID\" desc";
+                
+                var appMenu = _dapperQuery.StrConQry<Customers>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
     }
 }
