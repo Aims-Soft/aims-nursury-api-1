@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7051"
+          "Port": "8501"
         }
       ],
       "UpstreamPathTemplate": "/auth-api/auth"
@@ -17,7 +17,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7051"
+          "Port": "8501"
         }
       ],
       "UpstreamPathTemplate": "/user-api/test"
@@ -28,7 +28,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7051"
+          "Port": "8501"
         }
       ],
       "UpstreamPathTemplate": "/user-api/genOTP"
@@ -39,7 +39,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7051"
+          "Port": "8501"
         }
       ],
       "UpstreamPathTemplate": "/user-api/verifyOTP"
@@ -50,7 +50,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7051"
+          "Port": "8501"
         }
       ],
       "UpstreamPathTemplate": "/auth-api/logo"
@@ -61,7 +61,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7051"
+          "Port": "8501"
         }
       ],
       "UpstreamPathTemplate": "/user-api/{catchAll}",
@@ -76,7 +76,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7052"
+          "Port": "8502"
         }
       ],
       "UpstreamPathTemplate": "/core-api/{catchAll}",
@@ -91,7 +91,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7053"
+          "Port": "8503"
         }
       ],
       "UpstreamPathTemplate": "/bachat-online-api/{catchAll}"
@@ -102,7 +102,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7054"
+          "Port": "8504"
         }
       ],
       "UpstreamPathTemplate": "/fmis-api/{catchAll}",
@@ -117,7 +117,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7055"
+          "Port": "8505"
         }
       ],
       "UpstreamPathTemplate": "/cmis-api/{catchAll}",
@@ -132,7 +132,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "7056"
+          "Port": "8506"
         }
       ],
       "UpstreamPathTemplate": "/report-api/{catchAll}",
@@ -143,6 +143,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7050/"
+    "BaseUrl": "https://localhost:8500/"
   }
 }
