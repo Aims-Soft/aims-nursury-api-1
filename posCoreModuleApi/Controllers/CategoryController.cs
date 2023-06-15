@@ -29,14 +29,14 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getCategory")]
-        public IActionResult getCategory(int businessID,int companyID,int userID, int moduleId)
+        public IActionResult getCategory(int branchID,int companyID,int userID, int moduleId)
         {
             try
             {
-                if(companyID == 0 && businessID != 0){
-                    cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + "  and \"parentCategoryID\" is null";
+                if(companyID == 0 && branchID != 0){
+                    cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + "  and \"parentCategoryID\" is null";
                 }else{
-                    cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 and \"parentCategoryID\" is null AND \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + "";
+                    cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 and \"parentCategoryID\" is null AND \"branchID\" = " + branchID + " AND \"companyid\" = " + companyID + "";
                 }
                 var appMenu = _dapperQuery.StrConQry<Category>(cmd,userID,moduleId); 
                 return Ok(appMenu);
@@ -49,27 +49,27 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getSubCategory")]
-        public IActionResult getSubCategory(int catID, int companyID, int businessID,int userID, int moduleId)
+        public IActionResult getSubCategory(int catID, int companyID, int branchID,int userID, int moduleId)
         {
             try
             {
-                if(companyID == 0 && businessID != 0){
+                if(companyID == 0 && branchID != 0){
                     if (catID == 0)
                     {
-                        cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 AND businessid = " + businessID + " and \"parentCategoryID\"  is not null";
+                        cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + " and \"parentCategoryID\"  is not null";
                     }
                     else
                     {
-                        cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 AND businessid = " + businessID + " and \"parentCategoryID\" = " + catID + ";";
+                        cmd = "select * from public.\"category\" where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + " and \"parentCategoryID\" = " + catID + ";";
                     }
                 }else{
                     if (catID == 0)
                     {
-                        cmd = "select * from public.\"category\" where companyid = "+ companyID +" AND businessid = " + businessID + " AND \"isDeleted\"::int = 0 and \"parentCategoryID\"  is not null";
+                        cmd = "select * from public.\"category\" where companyid = "+ companyID +" AND \"branchID\" = " + branchID + " AND \"isDeleted\"::int = 0 and \"parentCategoryID\"  is not null";
                     }
                     else
                     {
-                        cmd = "select * from public.\"category\" where companyid = "+ companyID +" AND businessid = " + businessID + " AND \"isDeleted\"::int = 0 and \"parentCategoryID\" = " + catID + ";";
+                        cmd = "select * from public.\"category\" where companyid = "+ companyID +" AND \"branchID\" = " + branchID + " AND \"isDeleted\"::int = 0 and \"parentCategoryID\" = " + catID + ";";
                     }
                 }
                 var appMenu = _dapperQuery.StrConQry<Category>(cmd,userID,moduleId);
@@ -109,7 +109,7 @@ namespace posCoreModuleApi.Controllers
                 {
                     if (category == "")
                     {
-                        cmd = "insert into public.category (\"categoryName\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values ('" + obj.categoryName + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + ")";
+                        cmd = "insert into public.category (\"categoryName\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + obj.categoryName + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ")";
                     }
                     else
                     {
@@ -228,7 +228,7 @@ namespace posCoreModuleApi.Controllers
                 {
                     if (category == "")
                     {
-                        cmd = "insert into public.category (\"categoryName\", \"parentCategoryID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values ('" + obj.categoryName + "', '" + obj.parentCategoryID + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + ")";
+                        cmd = "insert into public.category (\"categoryName\", \"parentCategoryID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + obj.categoryName + "', '" + obj.parentCategoryID + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ")";
 
                     }
                     else

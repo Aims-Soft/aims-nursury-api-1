@@ -8,6 +8,9 @@ namespace posCoreModuleApi.Entities
     {
         public int partyID { get; set; }
         public int moduleId { get; set; }
+        public int businessid { get; set; }
+        public int companyid { get; set; }
+        public int branchID { get; set; }
         public string partyName { get; set; }
         public string mobile { get; set; }
         public string type { get; set; }

@@ -29,17 +29,17 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getProduct")]
-        public IActionResult getProduct(int businessID,int companyID,int userID, int moduleId)
+        public IActionResult getProduct(int branchID,int companyID,int userID, int moduleId)
         {
             try
             {   
-                if (businessID != 0 && companyID == 0)
+                if (branchID != 0 && companyID == 0)
                 {
-                    cmd = "SELECT * FROM view_product where \"businessid\" = " + businessID + " order by \"productID\" desc";
+                    cmd = "SELECT * FROM view_product where \"branchid\" = " + branchID + " order by \"productID\" desc";
                 }
                 else
                 {
-                    cmd = "SELECT * FROM view_product where \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + " order by \"productID\" desc";
+                    cmd = "SELECT * FROM view_product where \"branchid\" = " + branchID + " AND \"companyid\" = " + companyID + " order by \"productID\" desc";
                 }
                 var appMenu = _dapperQuery.StrConQry<Product>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -132,17 +132,17 @@ namespace posCoreModuleApi.Controllers
         // }
 
         [HttpGet("getProductByCategory")]
-        public IActionResult getProductByCategory(int categoryID, int companyID, int businessID,int userID, int moduleId)
+        public IActionResult getProductByCategory(int categoryID, int companyID, int branchID,int userID, int moduleId)
         {
             try
             {
-                if (businessID != 0 && companyID == 0)
+                if (branchID != 0 && companyID == 0)
                 {
-                    cmd = "SELECT * FROM view_product where \"categoryID\" = " + categoryID + " AND \"businessid\" = " + businessID + " order by \"productID\" desc";
+                    cmd = "SELECT * FROM view_product where \"categoryID\" = " + categoryID + " AND \"branchid\" = " + branchID + " order by \"productID\" desc";
                 }
                 else
                 {
-                    cmd = "SELECT * FROM view_product where \"categoryID\" = " + categoryID + " AND \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + " order by \"productID\" desc";    
+                    cmd = "SELECT * FROM view_product where \"categoryID\" = " + categoryID + " AND \"branchid\" = " + branchID + " AND \"companyid\" = " + companyID + " order by \"productID\" desc";    
                 }
 
                 var appMenu = _dapperQuery.StrConQry<Product>(cmd,userID,moduleId);

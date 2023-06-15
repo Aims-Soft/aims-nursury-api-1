@@ -13,5 +13,8 @@ namespace posCoreModuleApi.Entities
         public string type { get; set; }
         public string cnic { get; set; }
         public int isDeleted { get; set; }
+        public int branchID { get; set; }
+        public int businessID { get; set; }
+        public int companyID { get; set; }
     }
 }

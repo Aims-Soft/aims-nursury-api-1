@@ -211,18 +211,18 @@ namespace posCoreModuleApi.Controllers
                 var found = false;
                 var cnic = "";
 
-                List<Party> appMenuParty = new List<Party>();
+                List<Customers> appMenuParty = new List<Customers>();                 
                 cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND (\"type\" = 'customer')";
-                appMenuParty = (List<Party>)_dapperQuery.StrConQry<Party>(cmd2, obj.userID,obj.moduleId);
+                appMenuParty = (List<Customers>)_dapperQuery.StrConQry<Customers>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuParty.Count > 0)
-                    cnic = appMenuParty[0].cnic;
+                cnic = appMenuParty[0].cnic;
 
                 if (obj.partyID == 0)
                 {
                     if (cnic == "")
                     {
-                        cmd = "insert into public.\"party\" (\"partyName\", \"mobile\", \"type\", \"cnic\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + obj.partyName + "', '" + obj.mobile + "', 'customer', '" + obj.cnic + "', '" + curDate + "', " + obj.userID + ", B'0')";
+                        cmd = "insert into public.\"party\" (\"partyName\", \"mobile\", \"type\", \"cnic\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + obj.partyName + "', '" + obj.mobile + "', 'customer', '" + obj.cnic + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ", "+obj.branchID+" )";
                     }
                     else
                     {
@@ -273,12 +273,12 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getAllCustomer")]
-        public IActionResult getAllCustomer(int userID, int moduleId)
+        public IActionResult getAllCustomer(int branchID,int userID, int moduleId)
         {
             try
             {
             
-                    cmd = "select * from public.party where \"isDeleted\"::int = 0 and \"type\" = 'customer' order by \"partyID\" desc";
+                    cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + " and \"type\" = 'customer' order by \"partyID\" desc";
                 
                 var appMenu = _dapperQuery.StrConQry<Customers>(cmd,userID,moduleId);
                 return Ok(appMenu);
