@@ -29,14 +29,14 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getEmployee")]
-        public IActionResult getEmployee(int businessID,int companyID,int userID, int moduleId)
+        public IActionResult getEmployee(int branchID,int companyID,int userID, int moduleId)
         {
             try
             {
-                if(companyID == 0 && businessID != 0){
-                    cmd = "SELECT * FROM view_employee where \"businessid\" = " + businessID + " order by \"partyID\" desc";
+                if(companyID == 0 && branchID != 0){
+                    cmd = "SELECT * FROM view_employee where \"branchID\" = " + branchID + " order by \"partyID\" desc";
                 }else{
-                    cmd = "SELECT * FROM view_employee where \"businessid\" = " + businessID + " and \"companyid\" = " + companyID + " order by \"partyID\" desc";
+                    cmd = "SELECT * FROM view_employee where \"branchID\" = " + branchID + " and \"companyid\" = " + companyID + " order by \"partyID\" desc";
                 }
                 var appMenu = _dapperQuery.StrConQry<Party>(cmd,userID,moduleId);
                 return Ok(appMenu);

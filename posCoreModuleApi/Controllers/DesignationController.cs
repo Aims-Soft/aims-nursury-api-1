@@ -29,14 +29,14 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getDesignation")]
-        public IActionResult getDesignation(int businessID, int companyID,int userID, int moduleId)
+        public IActionResult getDesignation(int branchID, int companyID,int userID, int moduleId)
         {
             try
             {
-                if(companyID == 0 && businessID != 0){
-                    cmd = "SELECT * FROM public.designation where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + "";
+                if(companyID == 0 && branchID != 0){
+                    cmd = "SELECT * FROM public.designation where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + "";
                 }else{
-                cmd = "SELECT * FROM public.designation where \"isDeleted\"::int = 0 AND \"businessid\" = " + businessID + " AND \"companyid\" = " + companyID + "";
+                cmd = "SELECT * FROM public.designation where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + " AND \"companyid\" = " + companyID + "";
                 }
                 var appMenu = _dapperQuery.StrConQry<Designation>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -65,7 +65,7 @@ namespace posCoreModuleApi.Controllers
                 var designation = "";
 
                 List<Designation> appMenuDesignation = new List<Designation>();
-                cmd2 = "select \"desginationName\" from designation where \"isDeleted\"::int = 0 and \"desginationName\" = '" + obj.designationName + "' and \"businessid\" = " + obj.businessid + " AND \"companyid\" = " + obj.companyid + "";
+                cmd2 = "select \"desginationName\" from designation where \"isDeleted\"::int = 0 and \"desginationName\" = '" + obj.designationName + "' and \"businessid\" = " + obj.businessid + " AND \"companyid\" = " + obj.companyid + " AND \"branchID\" = " + obj.branchID + "";
                 appMenuDesignation = (List<Designation>)_dapperQuery.StrConQry<Designation>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuDesignation.Count > 0)
@@ -76,7 +76,7 @@ namespace posCoreModuleApi.Controllers
 
                     if (designation == "")
                     {
-                        cmd = "insert into public.designation (\"desginationName\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values ('" + obj.designationName + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + ", " + obj.companyid + ")";
+                        cmd = "insert into public.designation (\"desginationName\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + obj.designationName + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + ", " + obj.companyid + ", " + obj.branchID + ")";
                     }
                     else
                     {
