@@ -83,7 +83,7 @@ namespace CMISModuleApi.Controllers
 
                 if(branchName == "")
                 {
-                    cmd2 = "INSERT INTO public.tbl_branch(\"branchID\", \"branchName\", \"branchAddress\", email, \"phoneNo\", \"mobileNo\", \"createdOn\", \"createdBy\", \"isDeleted\") values (" + newBranchID + ",'" + obj.branchName + "', '" + obj.branchAddress + "','" + obj.email + "', '" + obj.phoneNo + "', '" + obj.mobileNo + "', '" + curDate + "', '" + obj.userID + "', 0)";
+                    cmd2 = "INSERT INTO public.tbl_branch(\"branchID\", \"branchName\", \"branchAddress\", email, \"phoneNo\", \"mobileNo\", \"createdOn\", \"createdBy\", \"businessID\", \"isDeleted\") values (" + newBranchID + ",'" + obj.branchName + "', '" + obj.branchAddress + "','" + obj.email + "', '" + obj.phoneNo + "', '" + obj.mobileNo + "', '" + curDate + "', '" + obj.userID + "', '" + obj.businessID + "', 0)";
                 }
                 else
                 {
