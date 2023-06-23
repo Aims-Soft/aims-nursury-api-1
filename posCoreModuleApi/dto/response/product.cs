@@ -51,5 +51,6 @@ namespace posCoreModuleApi.Entities
         public string potSize { get; set; }
         public string mfgDate { get; set; }
         public string expDate { get; set; }
+        public int qty { get; set; }
     }
 }
