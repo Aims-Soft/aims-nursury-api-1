@@ -18,5 +18,7 @@ namespace reportApi.Entities
         public int branchID { get; set; }
         public float debit { get; set; }
         public float credit { get; set; }
+        public int partyID { get; set; }
+        public string partyname { get; set; }
     }
 }
