@@ -189,10 +189,30 @@ namespace posCoreModuleApi.Controllers
                 //     sizeID = obj.sizeID.ToString();
                 // }
                 // obj.applicationEDoc
+                
                 if (productName == "")
                 {
+                    
+                    
+                    //  string productIDQuery = "SELECT case when max(\"productID\") is null then 1 else max(\"productID\") + 1 FROM public.product";
+                     string productIDQuery = "SELECT COALESCE(MAX(\"productID\"), 0) + 1 FROM public.product";
+
+                     int productID;
+
+                    if (obj.userID != 0 && obj.moduleId != 0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
+                    }
+
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    using (NpgsqlCommand command = new NpgsqlCommand(productIDQuery, con))
+                    {
+                        con.Open();
+                        productID = int.Parse(command.ExecuteScalar().ToString());
+                    }
+
                     //cmd = "insert into public.product (\"categoryID\", \"uomID\", \"brandID\", \"productName\", \"productNameUrdu\", \"ROL\", \"maxLimit\", \"quickSale\", \"pctCode\", \"applicationedoc\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values ('" + obj.categoryID + "', " + obj.uomID + ", " + obj.brandID + ", '" + obj.productName + "', '" + obj.productNameUrdu + "', '" + obj.reOrderLevel + "', '" + obj.maxLimit + "', '" + obj.quickSale + "', '" + obj.pctCode + "', '" + obj.applicationEDoc + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ")";
-                    cmd = "insert into public.product (\"categoryID\", \"productName\", \"productNameUrdu\", \"applicationedoc\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"potType\",\"potSize\",\"brandID\",\"uomID\", \"mfgDate\", \"expDate\",\"branchID\") values ('" + obj.categoryID + "', '" + obj.productName + "', '" + obj.productNameUrdu + "', '" + obj.applicationEDoc + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ",'" + obj.potType + "','" + obj.potSize + "'," + obj.brandID + ", " + obj.uomID + ", '" + obj.mfgDate + "', '" + obj.expDate + "', " + obj.branchid + ")";
+                    cmd = "insert into public.product (\"productID\",\"categoryID\", \"productName\", \"productNameUrdu\", \"applicationedoc\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"potType\",\"potSize\",\"brandID\",\"uomID\", \"mfgDate\", \"expDate\",\"branchID\") values ('" + productID + "','" + obj.categoryID + "', '" + obj.productName + "', '" + obj.productNameUrdu + "', '" + obj.applicationEDoc + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ",'" + obj.potType + "','" + obj.potSize + "'," + obj.brandID + ", " + obj.uomID + ", '" + obj.mfgDate + "', '" + obj.expDate + "', " + obj.branchid + ")";
                 }
                 else
                 {
@@ -202,6 +222,7 @@ namespace posCoreModuleApi.Controllers
 
                 if (found == false)
                 {
+                    
                     if(obj.userID != 0 && obj.moduleId !=0)
                     {
                     saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
@@ -214,6 +235,8 @@ namespace posCoreModuleApi.Controllers
 
                 if (rowAffected > 0)
                 {
+
+
                     cmd2 = "SELECT \"productID\" FROM public.product order by \"productID\" desc limit 1";
                     appMenuProduct = (List<Product>)_dapperQuery.StrConQry<Product>(cmd2, obj.userID,obj.moduleId);
 
@@ -228,19 +251,42 @@ namespace posCoreModuleApi.Controllers
                         var barcodeID = 0;
                         if (appMenuBarcode.Count > 0)
                         {
-                            barcodeID = appMenuBarcode[0].barcodeID;
+                            barcodeID = appMenuBarcode[0].barcodeID + 1;
                         }
                         else
                         {
                             barcodeID = 1;
                         }
 
-                        cmd4 = "INSERT INTO public.barcode(\"productID\", \"barcode1\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values (" + prodID + ", '" + barcodeID + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ")";
+                        
+
+                        cmd4 = "INSERT INTO public.barcode(\"barcodeID\",\"productID\", \"barcode1\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values (" + barcodeID + "," + prodID + ", '" + barcodeID + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ")";
 
                     }
                     else
                     {
-                        cmd4 = "INSERT INTO public.barcode(\"productID\", \"barcode1\", \"barcode2\", \"barcode3\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values (" + prodID + ", '" + obj.barcode1 + "', '" + obj.barcode2 + "', '" + obj.barcode3 + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ")";
+
+                        // start for autoincrement of barcodeID
+                    string barcodeIDQuery = "SELECT COALESCE(MAX(\"barcodeID\"), 0) + 1 FROM public.barcode";
+
+                     int barcodeID;
+
+                    if (obj.userID != 0 && obj.moduleId != 0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
+                    }
+
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    using (NpgsqlCommand command = new NpgsqlCommand(barcodeIDQuery, con))
+                    {
+                        con.Open();
+                        barcodeID = int.Parse(command.ExecuteScalar().ToString());
+                    }
+
+                    // end for autoincrement of barcodeID
+
+
+                        cmd4 = "INSERT INTO public.barcode(\"barcodeID\",\"productID\", \"barcode1\", \"barcode2\", \"barcode3\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values (" + barcodeID + "," + prodID + ", '" + obj.barcode1 + "', '" + obj.barcode2 + "', '" + obj.barcode3 + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ")";
 
                     }
 
@@ -252,7 +298,28 @@ namespace posCoreModuleApi.Controllers
                     {
                         rowAffected2 = con.Execute(cmd4);
                     }
-                    cmd5 = "insert into public.\"productPrice\" (\"productID\", \"costPrice\", \"salePrice\", \"retailPrice\", \"wholeSalePrice\", \"gst\", \"et\", \"packing\", \"packingSalePrice\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values (" + prodID + ", " + obj.costPrice + ", " + obj.salePrice + ", " + obj.retailPrice + ", " + obj.wholeSalePrice + ", " + obj.gst + ", " + obj.et + ", " + obj.packingQty + ", " + obj.packingSalePrice + ", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+
+                    // start for autoincrement of productPrice
+                    string pPriceIDQuery = "SELECT COALESCE(MAX(\"pPriceID\"), 0) + 1 FROM public.\"productPrice\"";
+
+                     int pPriceID;
+
+                    if (obj.userID != 0 && obj.moduleId != 0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
+                    }
+
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    using (NpgsqlCommand command = new NpgsqlCommand(pPriceIDQuery, con))
+                    {
+                        con.Open();
+                        pPriceID = int.Parse(command.ExecuteScalar().ToString());
+                    }
+
+                    // end for autoincrement of productPrice
+
+
+                    cmd5 = "insert into public.\"productPrice\" (\"pPriceID\",\"productID\", \"costPrice\", \"salePrice\", \"retailPrice\", \"wholeSalePrice\", \"gst\", \"et\", \"packing\", \"packingSalePrice\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values (" + pPriceID + "," + prodID + ", " + obj.costPrice + ", " + obj.salePrice + ", " + obj.retailPrice + ", " + obj.wholeSalePrice + ", " + obj.gst + ", " + obj.et + ", " + obj.packingQty + ", " + obj.packingSalePrice + ", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                     if(obj.userID != 0 && obj.moduleId !=0)
                     {
                     saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
