@@ -44,6 +44,25 @@ namespace CMISModuleApi.Controllers
             }
         }
 
+        [HttpGet("getBusniessName")]
+        public IActionResult getBusniessName(int branchID)
+        {
+            try
+            {
+                if(branchID == 0){
+                    cmd = "SELECT * FROM view_businessname";
+                }else{
+                    cmd = "SELECT * FROM view_businessname where \"branchID\" = " + branchID + "";
+                }
+                var appMenu = dapperQuery.Qry<BusinessName>(cmd, _dbCon);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
 
         [HttpPost("saveBranch")]
         public IActionResult saveBranch(BranchCreation obj)

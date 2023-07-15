@@ -7,6 +7,7 @@ namespace posCoreModuleApi.Entities
     public class BankCreation
     {
         public int bankID { get; set; }
+        public int moduleId { get; set; }
         public int coaID { get; set; }
         public string bankName { get; set; }
         public string branchCode { get; set; }
@@ -20,5 +21,6 @@ namespace posCoreModuleApi.Entities
         public int userID { get; set; }
         public int businessid { get; set; }
         public int companyid { get; set; }
+        public int branchID { get; set; }
     }
 }

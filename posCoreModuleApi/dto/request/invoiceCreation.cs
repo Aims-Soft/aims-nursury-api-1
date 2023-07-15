@@ -14,6 +14,7 @@ namespace posCoreModuleApi.Entities
         public int refInvoiceNo { get; set; }
         public string refInvoiceDate { get; set; }
         public float cashReceived { get; set; }
+        public float bankcashReceived { get; set; }
         public float discount { get; set; }
         public float change { get; set; }
         public string fbrInvoiceNo { get; set; }

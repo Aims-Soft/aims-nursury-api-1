@@ -68,16 +68,24 @@ namespace posCoreModuleApi.Controllers
                 var total = 0.0;
 
 
-                if (obj.partyID == 0)
+                if (obj.partyID == 0 && obj.bankID == 0)
                 {
                     //In case of partyID is null
                     cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', " + obj.cashReceived + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                 }
-                else
+                else if (obj.partyID > 0 && obj.bankID ==0)
                 {
                     //In case of partyID is not null
                     cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"partyID\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.partyID + "', " + obj.cashReceived + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                 }
+                else if (obj.partyID > 0 && obj.bankID > 0)
+                {
+                    total = (obj.cashReceived + obj.bankcashReceived);
+                    //In case of partyID and bankID is not null
+                    cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"partyID\",\"bankID\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.partyID + "','" + obj.bankID + "', " + total + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                }
+
+
                 if(obj.userID != 0 && obj.moduleId !=0)
                     {
                     saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
@@ -139,7 +147,7 @@ namespace posCoreModuleApi.Controllers
                     }
 
                     //in case of loan (udhaar) payment where partyID is not null
-                    if (obj.partyID > 0 && (total - obj.cashReceived) > 0)
+                    if (obj.partyID > 0 && obj.bankID ==0 && (total - obj.cashReceived) > 0)
                     {
                         total -= obj.cashReceived;
 
@@ -155,11 +163,62 @@ namespace posCoreModuleApi.Controllers
                         }
                     }
 
-                    //in case of cash payment
-                    if (obj.cashReceived > 0)
+                    //in case of loan (udhaar) payment where partyID and bankID  is not null
+                    if (obj.partyID > 0 && obj.bankID > 0 && (total - (obj.cashReceived + obj.bankcashReceived)) > 0)
                     {
+                        total -= (obj.cashReceived + obj.bankcashReceived);
+
+                        cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, '6', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+
+                         if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                            rowAffected4 = con.Execute(cmd5);
+                        }
+                    }
+
+                    //in case of cash payment and bankcashReceived = 0
+                    if (obj.cashReceived > 0 && obj.bankcashReceived ==0)
+                    {
+                        
 
                         cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.cashReceived + "', 0, '2', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+
+                         if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                            rowAffected3 = con.Execute(cmd4);
+                        }
+                    }
+                    //in case of  bankcashReceived
+                    if (obj.cashReceived ==0  && obj.bankcashReceived > 0)
+                    {
+                        
+
+                        cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.bankcashReceived + "', 0, '2', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+
+                         if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                            rowAffected3 = con.Execute(cmd4);
+                        }
+                    }
+
+                    //in case of cash payment and bankcashReceived
+                    if (obj.cashReceived > 0 && obj.bankcashReceived > 0)
+                    {
+                        total = (obj.cashReceived + obj.bankcashReceived);
+
+                        cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, '2', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
 
                          if(obj.userID != 0 && obj.moduleId !=0)
                     {
