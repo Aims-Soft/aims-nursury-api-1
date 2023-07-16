@@ -62,11 +62,22 @@ namespace posCoreModuleApi.Controllers
                 int rowAffected3 = 0;
                 int rowAffected4 = 0;
                 int rowAffected5 = 0;
+                var coaID = 0;
                 var response = "";
                 List<Invoice> appMenuInvoice = new List<Invoice>();
                 // List<Invoice> appMenuBarcode = new List<Invoice>();
                 var total = 0.0;
 
+                List<Bank> appMenuBank = new List<Bank>();
+                cmd2 = "select \"coaid\" from bank where \"isDeleted\"::int = 0 and \"bankID\"='" + obj.bankID + "'";
+                appMenuBank = (List<Bank>)_dapperQuery.StrConQry<Bank>(cmd2, obj.userID,obj.moduleId);
+                // appMenuBank = (List<Bank>)dapperQuery.QryResult<Bank>(cmd2, _dbCon);
+
+                if (appMenuBank.Count > 0)
+                {
+                    coaID = appMenuBank[0].coaID;
+                }
+                
 
                 if (obj.partyID == 0 && obj.bankID == 0)
                 {
@@ -82,7 +93,7 @@ namespace posCoreModuleApi.Controllers
                 {
                     total = (obj.cashReceived + obj.bankcashReceived);
                     //In case of partyID and bankID is not null
-                    cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"partyID\",\"bankID\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.partyID + "','" + obj.bankID + "', " + total + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                    cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"partyID\",\"bankID\",\"refInvoiceNo\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.partyID + "','" + obj.bankID + "','" + obj.refInvoiceNo + "', " + total + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                 }
 
 
@@ -166,9 +177,11 @@ namespace posCoreModuleApi.Controllers
                     //in case of loan (udhaar) payment where partyID and bankID  is not null
                     if (obj.partyID > 0 && obj.bankID > 0 && (total - (obj.cashReceived + obj.bankcashReceived)) > 0)
                     {
+
+                        
                         total -= (obj.cashReceived + obj.bankcashReceived);
 
-                        cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, '6', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                        cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, "+coaID+", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
 
                          if(obj.userID != 0 && obj.moduleId !=0)
                     {
@@ -201,7 +214,7 @@ namespace posCoreModuleApi.Controllers
                     {
                         
 
-                        cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.bankcashReceived + "', 0, '2', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                        cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.bankcashReceived + "', 0, "+coaID+", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
 
                          if(obj.userID != 0 && obj.moduleId !=0)
                     {
@@ -218,7 +231,7 @@ namespace posCoreModuleApi.Controllers
                     {
                         total = (obj.cashReceived + obj.bankcashReceived);
 
-                        cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, '2', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                        cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, "+coaID+", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
 
                          if(obj.userID != 0 && obj.moduleId !=0)
                     {
