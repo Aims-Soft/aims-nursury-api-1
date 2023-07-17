@@ -93,7 +93,7 @@ namespace posCoreModuleApi.Controllers
                 {
                     total = (obj.cashReceived + obj.bankcashReceived);
                     //In case of partyID and bankID is not null
-                    cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"partyID\",\"bankID\",\"refInvoiceNo\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.partyID + "','" + obj.bankID + "','" + obj.refInvoiceNo + "', " + total + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                    cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"partyID\",\"bankID\",\"bankref\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.partyID + "','" + obj.bankID + "','" + obj.bankref + "', " + total + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                 }
 
 

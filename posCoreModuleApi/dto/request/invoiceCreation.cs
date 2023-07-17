@@ -10,7 +10,7 @@ namespace posCoreModuleApi.Entities
         public int moduleId { get; set; }
         public string invoiceDate { get; set; }
         public Nullable<int> partyID { get; set; }
-        public int bankID { get; set; }
+        public Nullable<int> bankID { get; set; }
         public int refInvoiceNo { get; set; }
         public string refInvoiceDate { get; set; }
         public float cashReceived { get; set; }
@@ -30,5 +30,6 @@ namespace posCoreModuleApi.Entities
         public int branchid { get; set; }
         public int businessid { get; set; }
         public int companyid { get; set; }
+        public string? bankref { get; set; }
     }
 }
