@@ -14,7 +14,7 @@ namespace posCoreModuleApi.Entities
         public string partyName { get; set; }
         public string mobile { get; set; }
         public string type { get; set; }
-        public string cnic { get; set; }
+        public string? cnic { get; set; }
         public int userID { get; set; }
     }
 }
