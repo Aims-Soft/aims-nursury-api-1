@@ -97,6 +97,7 @@ namespace posCoreModuleApi.Controllers
                 var response = "";
                 var found = false;
                 var title = "";
+                var coaID = 0;
 
                 List<COA> appMenuTitle = new List<COA>();
                 cmd2 = "select \"coaTitle\" from \"chartOfAccount\" where \"isDeleted\"::int = 0 and \"coaTitle\" = '" + obj.coaTitle + "'";
@@ -111,9 +112,8 @@ namespace posCoreModuleApi.Controllers
                     if (title == "")
                     {
                         cmd4 = "select \"coaID\" from public.\"chartOfAccount\" order by \"coaID\" desc limit 1";
-                        appMenuTitle = (List<COA>)_dapperQuery.StrConQry<COA>(cmd2, obj.userID,obj.moduleId);
+                        appMenuTitle = (List<COA>)_dapperQuery.StrConQry<COA>(cmd4, obj.userID,obj.moduleId);
 
-                        var coaID = 0;
                         if (appMenuTitle.Count > 0)
                         {
                             coaID = appMenuTitle[0].coaID + 1;
