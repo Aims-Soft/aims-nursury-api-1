@@ -23,5 +23,7 @@ namespace reportApi.Entities
         public string mobileNo { get; set; }
         public string businessFullName { get; set; }
         public string businessShortName { get; set; }
+        public string empName { get; set; }
+        public int userID { get; set; }
     }
 }

@@ -65,7 +65,7 @@ namespace reportApi.Controllers
         {
             try
             {
-                cmd = "select * from public.\"view_invoiceprintdetail\"  where \"companyid\" = " + companyid + " and \"branchid\" = " + branchid + " and \"invoiceNo\" = '"+invoiceNo+"'";
+                cmd = "select * from public.\"view_invoiceprintdetail\"  where \"companyid\" = " + companyid + " and \"branchid\" = " + branchid + " and \"invoiceNo\" = '"+invoiceNo+"' and \"userID\" = "+userID+"";
 
                 var appMenu = _dapperQuery.StrConQry<InvoicePrintDetail>(cmd,userID,moduleId);
                 return Ok(appMenu);
