@@ -68,11 +68,8 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                if(companyID == 0 && businessID == 0){
-                    cmd = "select * from \"chartOfAccount\" where \"isDeleted\"::int = 0 and subtype = 'bank'";
-                }else{
-                    cmd = "select * from \"chartOfAccount\" where  companyid = " + companyID + " AND businessid = " + businessID + " AND \"isDeleted\"::int = 0 and subtype = 'bank'";
-                }
+                
+                cmd = "select * from \"chartOfAccount\" where  companyid = " + companyID + " AND businessid = " + businessID + " AND \"isDeleted\"::int = 0 and subtype = 'bank'";
                 var appMenu = _dapperQuery.StrConQry<COA>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }

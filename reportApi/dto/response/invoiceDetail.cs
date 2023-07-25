@@ -10,6 +10,7 @@ namespace reportApi.Entities
         public string invoiceType { get; set; }
         public string invoiceDate { get; set; }
         public int branchid { get; set; }
+        public int companyid { get; set; }
         public float amount { get; set; }
         public string partyname { get; set; }
     }

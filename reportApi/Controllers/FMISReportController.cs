@@ -45,11 +45,11 @@ namespace reportApi.Controllers
         }
 
         [HttpGet("getInvoiceDetail")]
-        public IActionResult getInvoiceDetail(int branchid,int userID, int moduleId)
+        public IActionResult getInvoiceDetail(int companyid,int branchid,int userID, int moduleId)
         {
             try
             {
-                cmd = "select * from public.\"view_invoicedetail\"  where \"branchid\" = " + branchid + "";
+                cmd = "select * from public.\"view_invoicedetail\"  where \"companyid\" = " + companyid + " and \"branchid\" = " + branchid + "";
 
                 var appMenu = _dapperQuery.StrConQry<InvoiceDetail>(cmd,userID,moduleId);
                 return Ok(appMenu);
