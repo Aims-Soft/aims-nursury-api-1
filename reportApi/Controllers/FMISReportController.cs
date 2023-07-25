@@ -77,11 +77,19 @@ namespace reportApi.Controllers
         }
 
         [HttpGet("getPartyLedgerReport")]
-        public IActionResult getPartyLedgerReport(int branchID,int partyID, string fromDate, string toDate,int userID, int moduleId)
+        public IActionResult getPartyLedgerReport(int branchID,int partyID,int coaID, string fromDate, string toDate,int userID, int moduleId)
         {
             try
             {
-                cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and \"partyledgerview\".\"branchid\" = " + branchID + " and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+                if (coaID ==0)
+                {
+
+                    cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and \"partyledgerview\".\"branchid\" = " + branchID + " and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+                }
+                else
+                {
+                    cmd = "select * from public.partyledgerview  where partyledgerview.partyid = '" + partyID + "' and partyledgerview.coaid = '" + coaID + "' and \"partyledgerview\".\"branchid\" = " + branchID + " and invoicedate BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+                }
 
                 var appMenu = _dapperQuery.StrConQry<PartyLedger>(cmd,userID,moduleId);
                 return Ok(appMenu);
