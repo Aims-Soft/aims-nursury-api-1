@@ -60,6 +60,22 @@ namespace reportApi.Controllers
             }
         }
 
+        [HttpGet("getInvoicePrintDetail")]
+        public IActionResult getInvoicePrintDetail(int companyid,int branchid,string invoiceNo,int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select * from public.\"view_invoiceprintdetail\"  where \"companyid\" = " + companyid + " and \"branchid\" = " + branchid + " and \"invoiceNo\" = '"+invoiceNo+"'";
+
+                var appMenu = _dapperQuery.StrConQry<InvoicePrintDetail>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
         [HttpGet("getPartyLedgerReport")]
         public IActionResult getPartyLedgerReport(int branchID,int partyID, string fromDate, string toDate,int userID, int moduleId)
         {
