@@ -143,7 +143,7 @@ namespace posCoreModuleApi.Controllers
                             rowAffected2 = con.Execute(cmd3);
                         }
 
-                        total += item.salePrice;
+                        total += (item.qty * item.salePrice);
                     }
 
                     total -= obj.discount;
