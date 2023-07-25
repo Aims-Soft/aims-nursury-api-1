@@ -44,6 +44,22 @@ namespace reportApi.Controllers
             }
         }
 
+        [HttpGet("getInvoiceDetail")]
+        public IActionResult getInvoiceDetail(int branchid,int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select * from public.\"view_invoicedetail\"  where \"branchid\" = " + branchid + "";
+
+                var appMenu = _dapperQuery.StrConQry<InvoiceDetail>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
         [HttpGet("getPartyLedgerReport")]
         public IActionResult getPartyLedgerReport(int branchID,int partyID, string fromDate, string toDate,int userID, int moduleId)
         {

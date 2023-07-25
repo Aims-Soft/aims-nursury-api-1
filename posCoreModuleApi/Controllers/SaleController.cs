@@ -67,6 +67,7 @@ namespace posCoreModuleApi.Controllers
                 List<Invoice> appMenuInvoice = new List<Invoice>();
                 // List<Invoice> appMenuBarcode = new List<Invoice>();
                 var total = 0.0;
+                var totalAmount = 0.0;
 
                 List<Bank> appMenuBank = new List<Bank>();
                 cmd2 = "select \"coaid\" from bank where \"isDeleted\"::int = 0 and \"bankID\"='" + obj.bankID + "'";
@@ -91,16 +92,16 @@ namespace posCoreModuleApi.Controllers
                 }
                 else if (obj.partyID > 0 && obj.bankID > 0)
                 {
-                    total = (obj.cashReceived + obj.bankcashReceived);
+                    // total = (obj.cashReceived + obj.bankcashReceived);
                     //In case of partyID and bankID is not null
-                    cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"partyID\",\"bankID\",\"bankref\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.partyID + "','" + obj.bankID + "','" + obj.bankref + "', " + total + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                    cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\", \"partyID\",\"bankID\",\"bankref\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\",\"bankcashReceived\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.partyID + "','" + obj.bankID + "','" + obj.bankref + "', " + obj.cashReceived + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ",'" + obj.bankcashReceived + "')";
                 }
 
                 else if (obj.partyID == 0 && obj.bankID > 0)
                 {
                     total = (obj.cashReceived + obj.bankcashReceived);
                     //In case of partyID and bankID is not null
-                    cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\",\"bankID\",\"bankref\", \"cashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.bankID + "','" + obj.bankref + "', " + total + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                    cmd = "insert into public.invoice (\"invoiceDate\", \"invoicetime\",\"bankID\",\"bankref\", \"bankcashReceived\", \"discount\", \"change\", \"invoiceType\", \"description\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + time + "', '" + obj.bankID + "','" + obj.bankref + "', " + obj.bankcashReceived + ", " + obj.discount + ", '" + obj.change + "', 'S', '" + obj.description + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                 }
 
 
@@ -185,10 +186,33 @@ namespace posCoreModuleApi.Controllers
                     if (obj.partyID > 0 && obj.bankID > 0 && (total - (obj.cashReceived + obj.bankcashReceived)) > 0)
                     {
 
-                        
-                        total -= (obj.cashReceived + obj.bankcashReceived);
+                            cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.bankcashReceived + "', 0, "+coaID+", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
 
-                        cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, "+coaID+", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                            if(obj.userID != 0 && obj.moduleId !=0)
+                        {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
+                            using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                            {
+                                rowAffected4 = con.Execute(cmd5);
+                            }
+
+                         cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.cashReceived + "', 0, 2, '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+
+                         if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                            rowAffected4 = con.Execute(cmd5);
+                        }
+                    
+
+                        
+                        totalAmount = total - (obj.cashReceived + obj.bankcashReceived);
+
+                        cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + totalAmount + "', 0, 6, '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
 
                          if(obj.userID != 0 && obj.moduleId !=0)
                     {
@@ -199,6 +223,36 @@ namespace posCoreModuleApi.Controllers
                             rowAffected4 = con.Execute(cmd5);
                         }
                     }
+                    //in case of  payment where partyID and bankID  is not null
+                    if (obj.partyID > 0 && obj.bankID > 0 && (total - (obj.cashReceived + obj.bankcashReceived)) <= 0)               
+                      {
+
+                            cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.bankcashReceived + "', 0, "+coaID+", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+
+                            if(obj.userID != 0 && obj.moduleId !=0)
+                        {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
+                            using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                            {
+                                rowAffected4 = con.Execute(cmd5);
+                            }
+
+                         cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.cashReceived + "', 0, 2, '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+
+                         if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                            rowAffected4 = con.Execute(cmd5);
+                        }
+                    
+                    }
+
+                    
+                    
 
                     //in case of cash payment and bankcashReceived = 0
                     if (obj.cashReceived > 0 && obj.bankcashReceived ==0)
@@ -222,23 +276,6 @@ namespace posCoreModuleApi.Controllers
                         
 
                         cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + obj.bankcashReceived + "', 0, "+coaID+", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
-
-                         if(obj.userID != 0 && obj.moduleId !=0)
-                    {
-                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                    }
-                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                        {
-                            rowAffected3 = con.Execute(cmd4);
-                        }
-                    }
-
-                    //in case of cash payment and bankcashReceived
-                    if (obj.cashReceived > 0 && obj.bankcashReceived > 0)
-                    {
-                        total = (obj.cashReceived + obj.bankcashReceived);
-
-                        cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, "+coaID+", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
 
                          if(obj.userID != 0 && obj.moduleId !=0)
                     {
