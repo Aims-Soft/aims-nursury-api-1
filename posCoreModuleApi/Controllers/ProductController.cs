@@ -28,7 +28,7 @@ namespace posCoreModuleApi.Controllers
             _dapperQuery = dapperQuery;
         }
 
-        [HttpGet("getProduct")]
+        [HttpGet("getProduct")] 
         public IActionResult getProduct(int branchID,int companyID,int userID, int moduleId)
         {
             try

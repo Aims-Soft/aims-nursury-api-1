@@ -20,7 +20,7 @@ namespace posCoreModuleApi.Controllers
     {
         private readonly IOptions<conStr> _dbCon;
         private readonly dapperQuery _dapperQuery;
-        private string cmd, cmd2, cmd3, cmd4, cmd5, cmd6;
+        private string cmd, cmd2, cmd3, cmd4, cmd5, cmd6,cmd7;
         public string saveConStr;
 
         public PurchaseController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
@@ -107,6 +107,7 @@ namespace posCoreModuleApi.Controllers
                     //saving json data one by one in invoice detail table
                     foreach (var item in invObject)
                     {
+                        
                         cmd3 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"productID\", \"qty\", \"costPrice\", \"salePrice\", \"debit\", \"credit\", \"discount\", \"productName\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + item.productID + "', '" + item.qty + "', '" + item.costPrice + "', '" + item.salePrice + "', '" + item.qty * item.salePrice + "', 0, '" + item.discount + "', '" + item.productName + "', '1', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                         if(obj.userID != 0 && obj.moduleId !=0)
                     {
@@ -118,6 +119,17 @@ namespace posCoreModuleApi.Controllers
                         }
 
                         total += item.salePrice;
+
+
+                        cmd7 = "update public.\"productPrice\" set \"costPrice\" = '" + item.costPrice + "', \"salePrice\" = '" + item.salePrice + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"productID\" = " + item.productID + "";
+                        if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                            rowAffected2 = con.Execute(cmd7);
+                        }
                     }
 
                     total -= obj.discount;
