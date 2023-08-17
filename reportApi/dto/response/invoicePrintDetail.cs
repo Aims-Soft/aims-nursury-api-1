@@ -25,5 +25,6 @@ namespace reportApi.Entities
         public string businessShortName { get; set; }
         public string empName { get; set; }
         public int userID { get; set; }
+        public int subtotal { get; set; }
     }
 }
