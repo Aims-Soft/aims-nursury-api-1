@@ -26,5 +26,8 @@ namespace reportApi.Entities
         public string empName { get; set; }
         public int userID { get; set; }
         public int subtotal { get; set; }
+        public int oldbal { get; set; }
+        public int newbal { get; set; }
+        public int grandbal { get; set; }
     }
 }
