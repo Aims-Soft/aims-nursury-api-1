@@ -31,5 +31,9 @@ namespace posCoreModuleApi.Entities
         public int businessid { get; set; }
         public int companyid { get; set; }
         public string? bankref { get; set; }
+        public string? customerName { get; set; }
+        public string? orderType { get; set; }
+        public Nullable<int> businessTypeID { get; set; }
+        public string? orderJson { get; set; }
     }
 }

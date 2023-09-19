@@ -16,6 +16,7 @@ namespace UMISModuleAPI.Entities
         public int companyID { get; set; }
         public int businessID { get; set; }
         public int branchID { get; set; }
+        public int businessTypeID { get; set; }
 
     }
 }

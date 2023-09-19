@@ -20,7 +20,7 @@ namespace posCoreModuleApi.Controllers
     {
         private readonly IOptions<conStr> _dbCon;
         private readonly dapperQuery _dapperQuery;
-        private string cmd, cmd2, cmd3, cmd4, cmd5, cmd6,cmd7;
+        private string cmd, cmd2, cmd3, cmd4, cmd5, cmd6,cmd7, cmd8, cmd9;
         public string saveConStr;
 
         public PurchaseController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
@@ -63,10 +63,13 @@ namespace posCoreModuleApi.Controllers
                 int rowAffected3 = 0;
                 int rowAffected4 = 0;
                 int rowAffected5 = 0;
+                int rowAffected6 = 0;
+                int rowAffected7 = 0;
                 var response = "";
                 List<Invoice> appMenuInvoice = new List<Invoice>();
                 // List<Invoice> appMenuBarcode = new List<Invoice>();
                 var total = 0.0;
+                var totalTax = 0.0;
 
 
                 if (obj.partyID == 0)
@@ -107,25 +110,53 @@ namespace posCoreModuleApi.Controllers
                     //saving json data one by one in invoice detail table
                     foreach (var item in invObject)
                     {
+                        var debitAmount = 0.0;
+                        debitAmount = (item.costPrice*item.qty)+item.adtAmount + item.stAmount;
                         
-                        cmd3 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"productID\", \"qty\", \"costPrice\", \"salePrice\", \"debit\", \"credit\", \"discount\", \"productName\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + item.productID + "', '" + item.qty + "', '" + item.costPrice + "', '" + item.salePrice + "', '" + item.qty * item.salePrice + "', 0, '" + item.discount + "', '" + item.productName + "', '1', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                        cmd3 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"productID\", \"qty\", \"costPrice\", \"salePrice\", \"debit\", \"credit\", \"discount\", \"productName\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + item.productID + "', '" + item.qty + "', '" + item.costPrice + "', '" + item.salePrice + "', '" + debitAmount + "', 0, '" + item.discount + "', '" + item.productName + "', '1', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                         if(obj.userID != 0 && obj.moduleId !=0)
-                    {
-                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                    }
+                        {
+                            saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
                         using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                         {
                             rowAffected2 = con.Execute(cmd3);
                         }
 
-                        total += item.salePrice;
+                        total += (item.costPrice*item.qty);
 
+                        totalTax+=item.adtAmount + item.stAmount;
 
+                        if(item.stAmount > 0){
+
+                            cmd8 =  "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', 0, '" + item.stAmount + "', '25', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                            if(obj.userID != 0 && obj.moduleId !=0)
+                            {
+                                saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                            }
+                            using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                            {
+                                rowAffected6 = con.Execute(cmd8);
+                            }
+                        }
+                        
+                        if(item.adtAmount > 0){
+
+                            cmd9 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', 0, '" + item.adtAmount + "', '25', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                            if(obj.userID != 0 && obj.moduleId !=0)
+                            {
+                                saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                            }
+                            using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                            {
+                                rowAffected7 = con.Execute(cmd9);
+                            }
+                        }
                         cmd7 = "update public.\"productPrice\" set \"costPrice\" = '" + item.costPrice + "', \"salePrice\" = '" + item.salePrice + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"productID\" = " + item.productID + "";
                         if(obj.userID != 0 && obj.moduleId !=0)
-                    {
-                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                    }
+                        {
+                            saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
                         using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                         {
                             rowAffected2 = con.Execute(cmd7);
@@ -140,9 +171,9 @@ namespace posCoreModuleApi.Controllers
 
                         cmd6 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', 0, '" + obj.discount + "', '3', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                         if(obj.userID != 0 && obj.moduleId !=0)
-                    {
-                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                    }
+                        {
+                            saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
                         using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                         {
                             rowAffected5 = con.Execute(cmd6);
@@ -157,9 +188,9 @@ namespace posCoreModuleApi.Controllers
 
                         cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', 0, '" + total + "', '6', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                         if(obj.userID != 0 && obj.moduleId !=0)
-                    {
-                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                    }
+                        {
+                            saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
                         using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                         {
                             rowAffected4 = con.Execute(cmd5);
@@ -172,14 +203,15 @@ namespace posCoreModuleApi.Controllers
 
                         cmd4 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', 0, '" + obj.cashReceived + "', '2', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                         if(obj.userID != 0 && obj.moduleId !=0)
-                    {
-                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                    }
+                        {
+                            saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
                         using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                         {
                             rowAffected3 = con.Execute(cmd4);
                         }
                     }
+                    
 
                 }
 

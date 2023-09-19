@@ -60,7 +60,7 @@ namespace UMISModuleAPI.Services
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
         {
             // cmd = "Select 'userID' as userLoginId, 'loginName' as loginName, '' as Password, 'roleId', 'empName' as FullName from view_user_login where 'loginName' = '" + model.Loginname + "' and 'Password' = '" + model.hashpassword + "';";
-            cmd = "Select \"userID\" as userLoginId, \"loginName\" as loginName, '' as Password, \"roleId\", \"empName\" as FullName, \"isPinCode\", \"branchID\", \"companyID\", \"businessID\" from view_user_login where \"loginName\" = '" + model.Loginname + "' and \"Password\" = '" + model.hashpassword + "'";
+            cmd = "Select \"userID\" as userLoginId, \"loginName\" as loginName, '' as Password, \"roleId\", \"empName\" as FullName, \"isPinCode\", \"branchID\", \"companyID\", \"businessID\", \"businessTypeID\" from view_user_login where \"loginName\" = '" + model.Loginname + "' and \"Password\" = '" + model.hashpassword + "'";
             // cmd = "Select * from view_user_login";
 
             List<User> user = new List<User>(dapperQuery.Qry<User>(cmd, _dbCon));

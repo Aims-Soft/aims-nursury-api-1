@@ -17,6 +17,8 @@ namespace posCoreModuleApi.Entities
         public float discount { get; set; }
         public float gst { get; set; }
         public float et { get; set; }
+        public float adtAmount { get; set; }
+        public float stAmount { get; set; }
         public string expiryDate { get; set; }
         public string mfgDate { get; set; }
         public string batchNo { get; set; }

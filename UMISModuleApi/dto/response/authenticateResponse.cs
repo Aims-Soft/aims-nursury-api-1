@@ -16,6 +16,7 @@ namespace UMISModuleAPI.Models
         public int companyID { get; set; }
         public int businessID { get; set; }
         public int branchID { get; set; }
+        public int businessTypeID { get; set; }
 
 
         public AuthenticateResponse(List<User> user, string userToken)
@@ -30,6 +31,7 @@ namespace UMISModuleAPI.Models
             companyID = user[0].companyID;
             businessID = user[0].businessID;
             branchID = user[0].branchID;
+            businessTypeID = user[0].businessTypeID;
         }
     }
 }

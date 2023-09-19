@@ -47,6 +47,127 @@ namespace posCoreModuleApi.Controllers
 
         }
 
+
+        [HttpGet("getOrder")]
+        public IActionResult getOrder(int branchId, int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "SELECT o.\"orderID\", o.\"customerID\", o.\"customerName\", o.\"orderType\", SUM(od.\"qty\" * od.\"price\") AS \"total\" FROM \"Order\" o INNER JOIN \"OrderDetail\" od ON o.\"orderID\" = od.\"orderID\" where o.status ='1' and o.\"isDeleted\"::int = 0 and o.branchid = " + branchId + " GROUP BY o.\"orderID\", o.\"customerName\", o.\"customerID\" ";
+
+                // cmd = "select * from \"view_saleReturn\" where \"invoiceNo\" = " + invoiceNo + " and \"isDeleted\"::int = 0 and \"productID\" is not null";
+                var appMenu = _dapperQuery.StrConQry<Order>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
+
+        [HttpGet("getOrderDetail")]
+        public IActionResult getOrder(int branchId, int orderNo, int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select * from \"OrderDetail\" where \"orderID\"=" + orderNo + " and \"isDeleted\"::int = 0 and branchid = "+branchId+"";
+
+                // cmd = "select * from \"view_saleReturn\" where \"invoiceNo\" = " + invoiceNo + " and \"isDeleted\"::int = 0 and \"productID\" is not null";
+                var appMenu = _dapperQuery.StrConQry<OrderDetail>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
+
+        [HttpPost("saveOrder")]
+        public IActionResult saveOrder(InvoiceCreation obj)
+        {
+            try
+            {
+                DateTime curDate = DateTime.Today;
+                DateTime curTime = DateTime.Now;
+
+                var time = curTime.ToString("HH:mm");
+
+                int rowAffected = 0;
+                int rowAffected2 = 0;
+                int rowAffected3 = 0;
+                int rowAffected4 = 0;
+                int rowAffected5 = 0;
+                var coaID = 0;
+                var response = "";
+                List<Order> appMenuOrder = new List<Order>();
+
+                var total = 0.0;
+                var totalAmount = 0.0;
+
+                cmd = "insert into public.\"Order\" (\"orderDate\", \"customerID\", \"customerName\", status, \"orderType\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + obj.partyID + "', '" + obj.customerName + "', 1, '" + obj.orderType + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+
+                if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+
+                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                {
+                    rowAffected = con.Execute(cmd);
+                }
+
+                //confirmation of data saved in invoice
+                if (rowAffected > 0)
+                {
+
+                    //getting last saved invoice no
+                    cmd2 = "SELECT \"orderID\" FROM public.\"Order\" order by \"orderID\" desc limit 1";
+                    appMenuOrder = (List<Order>)_dapperQuery.StrConQry<Order>(cmd2, obj.userID,obj.moduleId);
+
+                    var orderID = appMenuOrder[0].orderID;
+
+                    //convert string to json data to insert in invoice detail table
+                    var invObject = JsonConvert.DeserializeObject<List<InvoiceDetailCreation>>(obj.json);
+
+
+                    //saving json data one by one in invoice detail table
+                    foreach (var item in invObject)
+                    {
+                        cmd3 = "insert into public.\"OrderDetail\" (\"orderID\", \"productID\", \"qty\", \"costPrice\", price, \"productName\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + orderID + "', '" + item.productID + "', '" + item.qty + "', '" + item.costPrice + "', '" + item.salePrice + "', '" + item.productName + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+
+                         if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                            rowAffected2 = con.Execute(cmd3);
+                        }
+
+                    }
+
+                }
+
+                if (rowAffected > 0 && rowAffected2 > 0)
+                {
+                    response = "Success";
+                }
+                else
+                {
+                    response = "Server Issue";
+                }
+
+                return Ok(new { message = response, orderNo = appMenuOrder[0].orderID });
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
+
         [HttpPost("saveSales")]
         public IActionResult saveSales(InvoiceCreation obj)
         {
@@ -287,6 +408,31 @@ namespace posCoreModuleApi.Controllers
                         }
                     }
 
+
+                    if(obj.businessTypeID == 4){
+                        
+                        //convert string to json data to insert in invoice detail table
+                        var orderObject = JsonConvert.DeserializeObject<List<Order>>(obj.orderJson);
+
+
+                        //saving json data one by one in invoice detail table
+                        foreach (var item in orderObject)
+                        {
+                        
+                            cmd = "update \"Order\" set status = 2 where \"orderID\" = "+ item.orderID +";";
+                
+                            if(obj.userID != 0 && obj.moduleId !=0)
+                            {
+                            saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                            }
+                            using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                            {
+                                rowAffected3 = con.Execute(cmd);
+                            }
+
+                        }
+
+                    }
                 }
 
                 if (rowAffected > 0 && rowAffected2 > 0)
@@ -496,5 +642,53 @@ namespace posCoreModuleApi.Controllers
             }
 
         }
+
+        [HttpPost("deleteOrder")]
+        public IActionResult deleteOrder(Order obj)
+        {
+            try
+            {
+                DateTime curDate = DateTime.Today;
+                int rowAffected = 0;
+                int rowAffected2 = 0;
+                var response = "";
+
+                cmd = "update \"Order\" set \"isDeleted\" = B'1' where \"orderID\" = "+ obj.orderID +";";
+                
+                cmd2 = "update \"OrderDetail\" set \"isDeleted\" = B'1' where \"orderID\" = "+ obj.orderID +";";
+
+                if(obj.userID != 0 && obj.moduleId !=0)
+                {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    {
+                        rowAffected = con.Execute(cmd2);
+                    }
+                    
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    {
+                        rowAffected2 = con.Execute(cmd);
+                    }
+                }
+
+                if (rowAffected > 0 && rowAffected2 > 0)
+                {
+                    response = "Success";
+                }
+                else
+                {
+                    response = "Invalid Input Error";
+                }
+
+                return Ok(new { message = response });
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
+    
     }
 }
