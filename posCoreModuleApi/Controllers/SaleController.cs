@@ -53,7 +53,7 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                cmd = "SELECT o.\"orderID\", o.\"customerID\", o.\"customerName\", o.\"orderType\", SUM(od.\"qty\" * od.\"price\") AS \"total\" FROM \"Order\" o INNER JOIN \"OrderDetail\" od ON o.\"orderID\" = od.\"orderID\" where o.status ='1' and o.\"isDeleted\"::int = 0 and o.branchid = " + branchId + " GROUP BY o.\"orderID\", o.\"customerName\", o.\"customerID\" ";
+                cmd = "SELECT o.\"orderID\", o.\"customerID\", o.\"customerName\", o.\"orderType\", SUM(od.\"qty\" * od.\"price\") AS \"total\", o.remarks, o.\"refOrderID\" FROM \"Order\" o INNER JOIN \"OrderDetail\" od ON o.\"orderID\" = od.\"orderID\" where o.status ='1' and o.\"isDeleted\"::int = 0 and o.branchid = " + branchId + " GROUP BY o.\"orderID\", o.\"customerName\", o.\"customerID\",o.remarks ";
 
                 // cmd = "select * from \"view_saleReturn\" where \"invoiceNo\" = " + invoiceNo + " and \"isDeleted\"::int = 0 and \"productID\" is not null";
                 var appMenu = _dapperQuery.StrConQry<Order>(cmd,userID,moduleId);
@@ -106,7 +106,20 @@ namespace posCoreModuleApi.Controllers
                 var total = 0.0;
                 var totalAmount = 0.0;
 
-                cmd = "insert into public.\"Order\" (\"orderDate\", \"customerID\", \"customerName\", status, \"orderType\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + obj.invoiceDate + "', '" + obj.partyID + "', '" + obj.customerName + "', 1, '" + obj.orderType + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+            if(obj.refOrderNo == 0){
+            List<Order> appMenuOrderID = new List<Order>();
+                cmd2 = "select (max(\"orderID\")+1) as \"orderID\" from \"Order\" ";
+
+                appMenuOrderID = (List<Order>)_dapperQuery.StrConQry<Order>(cmd2, obj.userID,obj.moduleId);
+
+                if (appMenuOrderID.Count > 0)
+                {
+                    obj.refOrderNo = appMenuOrderID[0].orderID;
+                }
+
+            }
+    
+                cmd = "insert into public.\"Order\" (\"orderDate\", \"customerID\", \"customerName\", status, \"orderType\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\",\"remarks\",\"refOrderID\") values ('" + obj.invoiceDate + "', '" + obj.partyID + "', '" + obj.customerName + "', 1, '" + obj.orderType + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ",'" + obj.description + "', " + obj.refOrderNo + ")";
 
                 if(obj.userID != 0 && obj.moduleId !=0)
                     {
@@ -409,7 +422,7 @@ namespace posCoreModuleApi.Controllers
                     }
 
 
-                    if(obj.businessTypeID == 4){
+                    if(obj.businessTypeID == 3){
                         
                         //convert string to json data to insert in invoice detail table
                         var orderObject = JsonConvert.DeserializeObject<List<Order>>(obj.orderJson);

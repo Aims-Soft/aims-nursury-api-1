@@ -35,5 +35,6 @@ namespace posCoreModuleApi.Entities
         public string? orderType { get; set; }
         public Nullable<int> businessTypeID { get; set; }
         public string? orderJson { get; set; }
+        public int? refOrderNo { get; set; }
     }
 }

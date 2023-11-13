@@ -7,8 +7,10 @@ namespace posCoreModuleApi.Entities
     public class Order
     {
         public int orderID { get; set; }
+        public int customerID { get; set; }
         public string orderDate { get; set; }
         public string customerName { get; set; }
+        public string remarks { get; set; }
         public string status { get; set; }
         public string orderType { get; set; }
         public string total { get; set; }
@@ -18,5 +20,6 @@ namespace posCoreModuleApi.Entities
         public int companyid { get; set; }
         public int branchid { get; set; }
         public int moduleId { get; set; }
+        public int refOrderID { get; set; }
     }
 }
