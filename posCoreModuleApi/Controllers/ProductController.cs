@@ -611,7 +611,7 @@ namespace posCoreModuleApi.Controllers
 
                     List<Category> appMenuCategoryIncreament = new List<Category>();
                     cmd6 = "Select \"categoryID\" from category Order By \"categoryID\" Desc Limit 1 ";
-                    appMenuCategoryIncreament = (List<Category>)dapperQuery.Qry<Category>(cmd6, _dbCon);
+                    appMenuCategoryIncreament = (List<Category>)_dapperQuery.StrConQry<Category>(cmd6, obj.userID,obj.moduleId);
 
                         newCategoryID = appMenuCategoryIncreament[0].categoryID+1;
                     
@@ -642,13 +642,13 @@ namespace posCoreModuleApi.Controllers
 
                     List<Category> appMenuCategoryIncreament = new List<Category>();
                     cmd6 = "Select \"categoryID\" from category Order By \"categoryID\" Desc Limit 1 ";
-                    appMenuCategoryIncreament = (List<Category>)dapperQuery.Qry<Category>(cmd6, _dbCon);
+                    appMenuCategoryIncreament = (List<Category>)_dapperQuery.StrConQry<Category>(cmd6, obj.userID,obj.moduleId);
 
                         newCategoryID = appMenuCategoryIncreament[0].categoryID+1;
 
                     List<Category> appMenuParentCategory = new List<Category>();
                     cmd6 = "Select \"categoryID\" from category where \"categoryName\" = '" + item.product_category + "' and \"isDeleted\" = B'0' AND \"businessid\" = " + obj.businessID + " AND \"companyid\" = " + obj.companyID + "";
-                    appMenuParentCategory = (List<Category>)dapperQuery.Qry<Category>(cmd6, _dbCon);
+                    appMenuParentCategory = (List<Category>)_dapperQuery.StrConQry<Category>(cmd6, obj.userID,obj.moduleId);
 
                         parentCategoryID = appMenuParentCategory[0].categoryID+1;
                     
@@ -677,7 +677,7 @@ namespace posCoreModuleApi.Controllers
 
                     List<Category> forCategoryID = new List<Category>();
                     cmd6 = "Select \"categoryID\" from category where \"categoryName\" = '" + item.product_sub_category + "' ";
-                    forCategoryID = (List<Category>)dapperQuery.Qry<Category>(cmd6, _dbCon);
+                    forCategoryID = (List<Category>)_dapperQuery.StrConQry<Category>(cmd6,  obj.userID,obj.moduleId);
 
                     categoryID = forCategoryID[0].categoryID+1;
                     
