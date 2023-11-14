@@ -634,7 +634,7 @@ namespace posCoreModuleApi.Controllers
 
                 foreach (var item in distinctSubCategoryName)
                 {
-                    cmd2 = "Select \"categoryName\" from category where \"isDeleted\"::int = 0 AND \"categoryName\" = '" + item.product_category + "' AND \"businessid\" = " + obj.businessID + " AND \"companyid\" = " + obj.companyID + "";
+                    cmd2 = "Select \"categoryName\" from category where \"isDeleted\"::int = 0 AND \"categoryName\" = '" + item.product_sub_category + "' AND \"businessid\" = " + obj.businessID + " AND \"companyid\" = " + obj.companyID + "";
                     appMenuSubCategory = (List<Category>)_dapperQuery.StrConQry<Category>(cmd2, obj.userID,obj.moduleId);
 
                     if (appMenuSubCategory.Count > 0)
@@ -647,14 +647,14 @@ namespace posCoreModuleApi.Controllers
                         newCategoryID = appMenuCategoryIncreament[0].categoryID+1;
 
                     List<Category> appMenuParentCategory = new List<Category>();
-                    cmd6 = "Select \"categoryID\" from category where \"categoryName\" = '" + item.product_category + "' and \"isDeleted\" = B'0' AND \"businessid\" = " + obj.businessID + " AND \"companyid\" = " + obj.companyID + "";
+                    cmd6 = "Select \"categoryID\" from category where \"categoryName\" = '" + item.product_sub_category + "' and \"isDeleted\" = B'0' AND \"businessid\" = " + obj.businessID + " AND \"companyid\" = " + obj.companyID + "";
                     appMenuParentCategory = (List<Category>)_dapperQuery.StrConQry<Category>(cmd6, obj.userID,obj.moduleId);
 
-                        parentCategoryID = appMenuParentCategory[0].categoryID+1;
+                        parentCategoryID = appMenuParentCategory[0].categoryID;
                     
                     if (categoryExist == "")
                     {
-                        cmd = "insert into public.category (\"categoryID\",\"categoryName\",\"parentCategoryID\", \"level1\", \"level2\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + newCategoryID + "','" + item.product_category + "'," + parentCategoryID + ",1,1, '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + ", " + obj.branchID + ")";
+                        cmd = "insert into public.category (\"categoryID\",\"categoryName\",\"parentCategoryID\", \"level1\", \"level2\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + newCategoryID + "','" + item.product_sub_category + "'," + parentCategoryID + ",1,1, '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + ", " + obj.branchID + ")";
 
                         if(obj.userID != 0 && obj.moduleId !=0)
                         {
