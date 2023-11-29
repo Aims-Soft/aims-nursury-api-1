@@ -208,5 +208,37 @@ namespace reportApi.Controllers
                 return Ok(e);
             }
         }
+        
+        [HttpGet("getCashReport")]
+        public IActionResult getCashReport(int branchID, string invoiceDate, int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select * from public.view_dailyreportdata where \"invoiceDate\" = '" + invoiceDate + "' and (\"invoiceType\" ='S' or \"invoiceType\" = 'SR') and \"coaID\"= 2 and \"branchid\" = " + branchID + "";
+
+                var appMenu = _dapperQuery.StrConQry<CashReport>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+        
+        [HttpGet("getCreditReport")]
+        public IActionResult getCreditReport(int branchID, string invoiceDate, int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select * from public.view_dailyreportdata where \"invoiceDate\" = '" + invoiceDate + "' and (\"invoiceType\" ='S' or \"invoiceType\" = 'SR') and \"coaID\"= 6 and \"branchid\" = " + branchID + "";
+
+                var appMenu = _dapperQuery.StrConQry<CashReport>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
     }
 }

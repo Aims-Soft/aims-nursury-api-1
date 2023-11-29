@@ -34,7 +34,13 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                cmd = "select * from public.\"view_todaySaleTransaction\" where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";            
+                if(companyid == 0 && businessid == 0 && branchid == 0){
+                    cmd = "select * from public.\"view_todaySaleTransaction\"";            
+
+                }else{
+                    cmd = "select * from public.\"view_todaySaleTransaction\" where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";            
+
+                }
                 var appMenu = _dapperQuery.StrConQry<SaleTransactionDashboard>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
@@ -49,7 +55,12 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                cmd = "select * from public.\"view_todaySaleAmount\" where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+                if(companyid == 0 && businessid == 0 && branchid == 0){
+                    cmd = "select * from public.\"view_todaySaleAmount\"";
+
+                }else{
+                    cmd = "select * from public.\"view_todaySaleAmount\" where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+                }
                 var appMenu = _dapperQuery.StrConQry<SaleAmountDashboard>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
@@ -64,7 +75,13 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                cmd = "select * from public.\"view_topSellingItem\" where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+                if(companyid == 0 && businessid == 0 && branchid == 0){
+                    cmd = "select * from public.\"view_topSellingItem\"";
+
+                }else{
+                    cmd = "select * from public.\"view_topSellingItem\" where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+
+                }
                 var appMenu = _dapperQuery.StrConQry<TopSalesDashboard>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
@@ -79,7 +96,13 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                cmd = "select * from fn_dash_coa_type_summary('" + fromDate + "', '" + toDate + "') where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+                if(companyid == 0 && businessid == 0 && branchid == 0){
+                    cmd = "select * from fn_dash_coa_type_summary('" + fromDate + "', '" + toDate + "')";
+                
+                }else{
+                    cmd = "select * from fn_dash_coa_type_summary('" + fromDate + "', '" + toDate + "') where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+
+                }
                 var appMenu = _dapperQuery.StrConQry<COATypeSummaryDashboard>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
@@ -94,7 +117,12 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                cmd = "select * from fn_dash_under_stock(Current_date) where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+                if(companyid == 0 && businessid == 0 && branchid == 0){
+                    cmd = "select * from fn_dash_under_stock(Current_date) ";
+                }else{
+                    cmd = "select * from fn_dash_under_stock(Current_date) where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+
+                }
                 var appMenu = _dapperQuery.StrConQry<UnderStockDashboard>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
@@ -104,12 +132,19 @@ namespace posCoreModuleApi.Controllers
             }
         }
 
-        [HttpGet("getMonthlyExpense")]
-        public IActionResult getMonthlyExpense(string fromDate, string toDate,int userID, int moduleId)
+    [HttpGet("getMonthlyExpense")]
+        public IActionResult getMonthlyExpense(string fromDate, string toDate,int userID, int moduleId, int branchid,int businessid,int companyid)
         {
             try
             {
-                cmd = "select * from public.fn_dash_monthly_expense_income('" + fromDate + "', '" + toDate + "')";
+                if(companyid == 0 && businessid == 0 && branchid == 0){
+                    cmd = "select * from public.fn_dash_monthly_expense_income('"+fromDate+"', '"+toDate+"')";
+
+                }else{
+                    cmd = "select * from public.fn_dash_monthly_expense_income_with_company('"+fromDate+"', '"+toDate+"', "+branchid+", "+businessid+", "+companyid+")";
+
+                }
+                // cmd = "select * from public.fn_dash_monthly_expense_income('" + fromDate + "', '" + toDate + "') where branchid = " + branchid + " AND businessid = " + businessid + " AND companyid = " + companyid + "";
                 var appMenu = _dapperQuery.StrConQry<MonthlyExpenseDashboard>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
@@ -124,7 +159,11 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                cmd = "select * from public.fn_dash_daily_sale('" + fromDate + "', '" + toDate + "') where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+                if(companyid == 0 && businessid == 0 && branchid == 0){
+                    cmd = "select * from public.fn_dash_daily_sale('" + fromDate + "', '" + toDate + "')";
+                }else{
+                    cmd = "select * from public.fn_dash_daily_sale('" + fromDate + "', '" + toDate + "') where \"fld_branchid\" = " + branchid + " AND \"fld_businessid\" = " + businessid + " AND \"fld_companyid\" = " + companyid + "";
+                }
                 var appMenu = _dapperQuery.StrConQry<DailySalesDashboard>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
@@ -139,7 +178,12 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-                cmd = "select * from public.fn_dash_monthly_sale('" + fromDate + "', '" + toDate + "') where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+                if(companyid == 0 && businessid == 0 && branchid == 0){
+                    cmd = "select * from public.fn_dash_monthly_sale('" + fromDate + "', '" + toDate + "')";
+                }else{
+                    cmd = "select * from public.fn_dash_monthly_sale('" + fromDate + "', '" + toDate + "') where \"branchid\" = " + branchid + " AND \"businessid\" = " + businessid + " AND \"companyid\" = " + companyid + "";
+
+                }
                 var appMenu = _dapperQuery.StrConQry<MonthlySalesDashboard>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }

@@ -289,7 +289,7 @@ namespace UMISModuleApi.Controllers
                 if(obj.roleID >= 1 && roleTitle == "")
                 {   
 
-                    cmd2 = "update public.\"roles\" set  \"roleTitle\" = '" + obj.roleTitle + "', \"roleDescription\" = '" + obj.roleDescription + "', \"companyID\" = '" + obj.companyID + "', \"businessID\" = '" + obj.businessID + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"roleID\" = " + obj.roleID + ";";
+                    cmd2 = "update public.\"roles\" set  \"roleTitle\" = '" + obj.roleTitle + "', \"roleDescription\" = '" + obj.roleDescription + "', \"companyID\" = '" + obj.companyID + "', \"busniessID\" = '" + obj.businessID + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"roleID\" = " + obj.roleID + ";";
                     
                 }
                 else
