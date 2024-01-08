@@ -87,18 +87,22 @@ namespace posCoreModuleApi.Controllers
                 int rowAffected = 0;
                 var response = "";
                 var found = false;
-                var cnic = "";
+              //  var cnic = "";
+                var partyID = 0;
 
                 List<Party> appMenuParty = new List<Party>();
-                cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND (\"type\" = 'supplier' OR \"type\" = 'customer')";
+            //    cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND (\"type\" = 'supplier' OR \"type\" = 'customer')";
+                cmd2 = "select \"partyID\" from party where \"isDeleted\"::int = 0 AND (cnic = '" + obj.cnic + "' or mobile = '"+ obj.mobile +"') AND (\"type\" = 'supplier' OR \"type\" = 'customer')";
                 appMenuParty = (List<Party>)_dapperQuery.StrConQry<Party>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuParty.Count > 0)
-                    cnic = appMenuParty[0].cnic;
+                   // cnic = appMenuParty[0].cnic;
+                   partyID = appMenuParty[0].partyID;
 
                 if (obj.partyID == 0)
                 {
-                    if (cnic == "")
+                    // if (cnic == "")
+                    if (partyID == 0)
                     {
                         cmd = "insert into public.\"party\" (\"cityID\", \"partyName\", \"partyNameUrdu\", \"address\", \"addressUrdu\", \"phone\", \"mobile\", \"type\", \"description\", \"cnic\", \"focalperson\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + obj.cityID + "', '" + obj.partyName + "', '" + obj.partyNameUrdu + "', '" + obj.address + "', '" + obj.addressUrdu + "', '" + obj.phone + "', '" + obj.mobile + "', '" + obj.type + "', '" + obj.description + "', '" + obj.cnic + "', '" + obj.focalPerson + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + "," + obj.branchID + ")";
                     }
@@ -133,7 +137,7 @@ namespace posCoreModuleApi.Controllers
                 {
                     if (found == true)
                     {
-                        response = "CNIC already exist";
+                        response = "Party already exist";
                     }
                     else
                     {
