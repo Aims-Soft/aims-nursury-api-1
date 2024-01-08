@@ -60,12 +60,44 @@ namespace reportApi.Controllers
             }
         }
 
+        [HttpGet("getPurchases")]
+        public IActionResult getPurchases(int companyid,int branchid,int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select * from public.\"view_purchase\"  where \"companyid\" = " + companyid + " and \"branchid\" = " + branchid + "";
+
+                var appMenu = _dapperQuery.StrConQry<InvoiceDetail>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
         [HttpGet("getInvoicePrintDetail")]
         public IActionResult getInvoicePrintDetail(int companyid,int branchid,string invoiceNo,int userID, int moduleId)
         {
             try
             {
                 cmd = "select * from public.\"view_invoiceprintdetail\"  where \"companyid\" = " + companyid + " and \"branchid\" = " + branchid + " and \"invoiceNo\" = '"+invoiceNo+"' and \"userID\" = "+userID+"";
+
+                var appMenu = _dapperQuery.StrConQry<InvoicePrintDetail>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
+        [HttpGet("getPurchaseDetail")]
+        public IActionResult getPurchaseDetail(int companyid,int branchid,string invoiceNo,int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select * from public.\"view_purchaseDetail\"  where \"companyid\" = " + companyid + " and \"branchid\" = " + branchid + " and \"invoiceNo\" = '"+invoiceNo+"' and \"userID\" = "+userID+"";
 
                 var appMenu = _dapperQuery.StrConQry<InvoicePrintDetail>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -146,6 +178,23 @@ namespace reportApi.Controllers
                 return Ok(e);
             }
         }
+        
+        [HttpGet("getItemWiseDailySales")]
+        public IActionResult getItemWiseDailySales(int branchID,string startDate,string endDate,int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select p.\"productID\", p.\"productName\", SUM(ivd.qty) as qty, pp.\"costPrice\", pp.\"salePrice\" from product p join \"productPrice\" pp ON pp.\"productID\" = p.\"productID\" join \"invoiceDetail\" ivd ON ivd.\"productID\" = p.\"productID\" join invoice i ON i.\"invoiceNo\" = ivd.\"invoiceNo\" where i.\"invoiceDate\" >= '"+startDate+"' AND i.\"invoiceDate\" <= '"+endDate+"' and i.branchid = "+branchID+" group by p.\"productID\", p.\"productName\", pp.\"costPrice\", pp.\"salePrice\", i.\"invoiceType\" having i.\"invoiceType\"='S' ";
+
+                var appMenu = _dapperQuery.StrConQry<DailySales>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+        
         [HttpGet("getDailySalesByOrder")]
         public IActionResult getDailySalesByOrder(int branchID,string startDate,string endDate,int userID, int moduleId)
         {
@@ -162,11 +211,12 @@ namespace reportApi.Controllers
             }
         }
         [HttpGet("getStockInStockOut")]
-        public IActionResult getStockInStockOut(string invDate,int userID, int moduleId)
+        public IActionResult getStockInStockOut(string invDate,int userID, int moduleId, int companyID, int businessID)
         {
             try
             {
-                cmd = "select * from public.\"productStockInStockOut\"('"+invDate+"')";
+                // cmd = "select * from public.\"productStockInStockOut\"('"+invDate+"', "+companyID+", "+businessID+")";
+                cmd = "select  \"productID\", \"productName\", stockin, stockout, stockin-stockout as remainingstock, \"costPrice\" , \"costPrice\" *(stockin-stockout) as remainingcostprice  from public.\"productStockInStockOut\"('"+invDate+"', "+companyID+", "+businessID+")";
 
                 var appMenu = _dapperQuery.StrConQry<StockInStockOut>(cmd,userID,moduleId);
                 return Ok(appMenu);
@@ -214,7 +264,7 @@ namespace reportApi.Controllers
         {
             try
             {
-                cmd = "select * from public.view_dailyreportdata where \"invoiceDate\" = '" + invoiceDate + "' and (\"invoiceType\" ='S' or \"invoiceType\" = 'SR') and \"coaID\"= 2 and \"branchid\" = " + branchID + "";
+                cmd = "select * from public.view_dailycashreportdata where \"invoiceDate\" = '" + invoiceDate + "' and (\"invoiceType\" ='S' or \"invoiceType\" = 'SR') and \"coaID\"= 2 and \"branchid\" = " + branchID + "";
 
                 var appMenu = _dapperQuery.StrConQry<CashReport>(cmd,userID,moduleId);
                 return Ok(appMenu);

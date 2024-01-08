@@ -1,0 +1,148 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/User/authenticate",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8501"
+        }
+      ],
+      "UpstreamPathTemplate": "/auth-api/auth"
+    },
+    {
+      "DownstreamPathTemplate": "/User/getTestData",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8501"
+        }
+      ],
+      "UpstreamPathTemplate": "/user-api/test"
+    },
+    {
+      "DownstreamPathTemplate": "/User/saveOTP",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8501"
+        }
+      ],
+      "UpstreamPathTemplate": "/user-api/genOTP"
+    },
+    {
+      "DownstreamPathTemplate": "/User/getVerifyOTP",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8501"
+        }
+      ],
+      "UpstreamPathTemplate": "/user-api/verifyOTP"
+    },
+    {
+      "DownstreamPathTemplate": "/User/getCompanyLogo",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8501"
+        }
+      ],
+      "UpstreamPathTemplate": "/auth-api/logo"
+    },
+    {
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8501"
+        }
+      ],
+      "UpstreamPathTemplate": "/user-api/{catchAll}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "MyOwnKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8502"
+        }
+      ],
+      "UpstreamPathTemplate": "/core-api/{catchAll}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "MyOwnKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8503"
+        }
+      ],
+      "UpstreamPathTemplate": "/bachat-online-api/{catchAll}"
+    },
+    {
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8504"
+        }
+      ],
+      "UpstreamPathTemplate": "/fmis-api/{catchAll}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "MyOwnKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8505"
+        }
+      ],
+      "UpstreamPathTemplate": "/cmis-api/{catchAll}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "MyOwnKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "8506"
+        }
+      ],
+      "UpstreamPathTemplate": "/report-api/{catchAll}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "MyOwnKey",
+        "AllowedScopes": []
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:8500/"
+  }
+}

@@ -1,30 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "E:\\projects\\nursuryProject\\aims-nursury-api\\umismoduleapi\\UMISModuleApi.csproj": {}
+    "E:\\projects\\nursuryProject\\aims-nursury-api\\UMISModuleApi\\UMISModuleApi.csproj": {}
   },
   "projects": {
-    "E:\\projects\\nursuryProject\\aims-nursury-api\\umismoduleapi\\UMISModuleApi.csproj": {
+    "E:\\projects\\nursuryProject\\aims-nursury-api\\UMISModuleApi\\UMISModuleApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\projects\\nursuryProject\\aims-nursury-api\\umismoduleapi\\UMISModuleApi.csproj",
+        "projectUniqueName": "E:\\projects\\nursuryProject\\aims-nursury-api\\UMISModuleApi\\UMISModuleApi.csproj",
         "projectName": "UMISModuleApi",
-        "projectPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\umismoduleapi\\UMISModuleApi.csproj",
+        "projectPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\UMISModuleApi\\UMISModuleApi.csproj",
         "packagesPath": "C:\\Users\\sys\\.nuget\\packages\\",
-        "outputPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\umismoduleapi\\obj\\",
+        "outputPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\UMISModuleApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sys\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net5.0"
+          "net7.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net5.0": {
-            "targetAlias": "net5.0",
+          "net7.0": {
+            "targetAlias": "net7.0",
             "projectReferences": {}
           }
         },
@@ -35,8 +35,8 @@
         }
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "dependencies": {
             "Beiyuan.WebSystem.MailKit": {
               "target": "Package",
@@ -44,7 +44,7 @@
             },
             "Dapper": {
               "target": "Package",
-              "version": "[2.0.90, )"
+              "version": "[2.1.24, )"
             },
             "MailKit": {
               "target": "Package",
@@ -52,7 +52,7 @@
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
-              "version": "[5.0.1, )"
+              "version": "[8.0.0, )"
             },
             "MimeKit": {
               "target": "Package",
@@ -60,19 +60,19 @@
             },
             "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[12.0.3, )"
+              "version": "[13.0.3, )"
             },
             "Npgsql": {
               "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[8.0.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[5.6.3, )"
+              "version": "[6.5.0, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
-              "version": "[6.11.1, )"
+              "version": "[7.0.3, )"
             },
             "Zaabee.SmtpClient": {
               "target": "Package",
@@ -85,7 +85,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -97,7 +98,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.404\\RuntimeIdentifierGraph.json"
         }
       }
     }

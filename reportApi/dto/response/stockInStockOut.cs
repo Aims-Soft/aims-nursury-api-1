@@ -10,5 +10,8 @@ namespace reportApi.Entities
         public string productName { get; set; }
         public int stockin { get; set; }
         public int stockout { get; set; }
+        public int remainingstock { get; set; }
+        public float costPrice { get; set; }
+        public float remainingcostprice { get; set; }
     }
 }

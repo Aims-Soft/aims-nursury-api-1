@@ -152,7 +152,7 @@ namespace posCoreModuleApi.Controllers
                                 rowAffected7 = con.Execute(cmd9);
                             }
                         }
-                        cmd7 = "update public.\"productPrice\" set \"costPrice\" = '" + item.costPrice + "', \"salePrice\" = '" + item.salePrice + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"productID\" = " + item.productID + "";
+                        cmd7 = "update public.\"productPrice\" set \"costPrice\" = '" + item.costPrice + "', \"salePrice\" = '" + item.salePrice + "', \"discount\" = '" + item.discount + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"productID\" = " + item.productID + "";
                         if(obj.userID != 0 && obj.moduleId !=0)
                         {
                             saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
@@ -186,7 +186,7 @@ namespace posCoreModuleApi.Controllers
                     {
                         total -= obj.cashReceived;
 
-                        cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', 0, '" + total + "', '6', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                        cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', 0, '" + total + "', '5', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                         if(obj.userID != 0 && obj.moduleId !=0)
                         {
                             saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
@@ -249,6 +249,7 @@ namespace posCoreModuleApi.Controllers
                 int rowAffected3 = 0;
                 int rowAffected4 = 0;
                 int rowAffected5 = 0;
+                int rowAffected6 = 0;
                 var response = "";
                 List<Invoice> appMenuInvoice = new List<Invoice>();
                 // List<Invoice> appMenuBarcode = new List<Invoice>();
@@ -303,15 +304,17 @@ namespace posCoreModuleApi.Controllers
                         cmd3 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"productID\", \"qty\", \"costPrice\", \"salePrice\", \"debit\", \"credit\", \"discount\", \"productName\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + item.productID + "', '" + item.qty + "', '" + item.costPrice + "', '" + item.salePrice + "', 0, '" + item.qty * item.salePrice + "', '" + item.discount + "', '" + item.productName + "', '1', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
                     
                         if(obj.userID != 0 && obj.moduleId !=0)
-                    {
-                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                    }
+                        {
+                            saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
                         using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                         {
                             rowAffected2 = con.Execute(cmd3);
                         }
 
                         total += item.salePrice;
+
+
                     }
 
                     total -= obj.discount;
@@ -338,7 +341,7 @@ namespace posCoreModuleApi.Controllers
                     {
                         total -= obj.cashReceived;
 
-                        cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, '6', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
+                        cmd5 = "insert into public.\"invoiceDetail\" (\"invoiceNo\", \"debit\", \"credit\", \"coaID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values ('" + invoiceNo + "', '" + total + "', 0, '5', '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchid + "," + obj.businessid + "," + obj.companyid + ")";
 
                         if(obj.userID != 0 && obj.moduleId !=0)
                     {

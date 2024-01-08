@@ -222,7 +222,7 @@ namespace posCoreModuleApi.Controllers
                 {
                     if (cnic == "")
                     {
-                        cmd = "insert into public.\"party\" (\"partyName\", \"mobile\", \"type\", \"cnic\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + obj.partyName + "', '" + obj.mobile + "', 'customer', '" + obj.cnic + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ", "+obj.branchID+" )";
+                        cmd = "insert into public.\"party\" (\"cityID\", \"partyName\", \"mobile\", \"type\", \"cnic\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values (1, '" + obj.partyName + "', '" + obj.mobile + "', 'customer', '" + obj.cnic + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessid + "," + obj.companyid + ", "+obj.branchID+" )";
                     }
                     else
                     {

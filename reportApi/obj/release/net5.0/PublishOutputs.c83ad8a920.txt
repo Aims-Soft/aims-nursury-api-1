@@ -1,0 +1,16 @@
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\reportApi.exe
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\appsettings.Development.json
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\appsettings.json
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\reportApi.dll
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\reportApi.deps.json
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\reportApi.runtimeconfig.json
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\reportApi.pdb
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\Dapper.dll
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\Microsoft.Extensions.DependencyInjection.dll
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\Microsoft.OpenApi.dll
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\Newtonsoft.Json.dll
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\Npgsql.dll
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\Swashbuckle.AspNetCore.Swagger.dll
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\Swashbuckle.AspNetCore.SwaggerGen.dll
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
+E:\projects\nursuryProject\aims-nursury-api\reportapi\bin\release\net5.0\publish\System.Runtime.CompilerServices.Unsafe.dll

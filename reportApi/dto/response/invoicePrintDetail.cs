@@ -14,6 +14,9 @@ namespace reportApi.Entities
         public int qty { get; set; }
         public int change { get; set; }
         public int salePrice { get; set; }
+        public int costPrice { get; set; }
+        public float gst { get; set; }
+        public float et { get; set; }
         public int totalsalePrice { get; set; }
         public int cashReceived { get; set; }
         public int bankcashReceived { get; set; }
