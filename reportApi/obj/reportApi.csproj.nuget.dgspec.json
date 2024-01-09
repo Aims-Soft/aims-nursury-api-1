@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\projects\\nursuryProject\\aims-nursury-api\\reportApi\\reportApi.csproj": {}
+    "E:\\projects\\nursuryProject\\aims-nursury-api\\reportapi\\reportApi.csproj": {}
   },
   "projects": {
-    "E:\\projects\\nursuryProject\\aims-nursury-api\\reportApi\\reportApi.csproj": {
+    "E:\\projects\\nursuryProject\\aims-nursury-api\\reportapi\\reportApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\projects\\nursuryProject\\aims-nursury-api\\reportApi\\reportApi.csproj",
+        "projectUniqueName": "E:\\projects\\nursuryProject\\aims-nursury-api\\reportapi\\reportApi.csproj",
         "projectName": "reportApi",
-        "projectPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\reportApi\\reportApi.csproj",
+        "projectPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\reportapi\\reportApi.csproj",
         "packagesPath": "C:\\Users\\sys\\.nuget\\packages\\",
-        "outputPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\reportApi\\obj\\",
+        "outputPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\reportapi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sys\\AppData\\Roaming\\NuGet\\NuGet.Config"

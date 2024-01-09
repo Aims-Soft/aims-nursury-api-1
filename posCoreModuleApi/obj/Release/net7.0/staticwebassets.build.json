@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "nkW2LXJU+s9e5R+6llB5ZJOPCekg9hKsWDg+crxfams=",
+  "Source": "posCoreModuleApi",
+  "BasePath": "_content/posCoreModuleApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

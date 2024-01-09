@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OA0AXoa+w4JeLlnfPBkRoIlyhOeceCZESnrdHHozpGWi4ZzPWiX0LdWtgcgHpxoHwO1kC6aj/Qhi1SVyi7yPKQ==",
+  "dgSpecHash": "U2JqRmVrx3s88LDMzmH7Mbbd6QurO4qhwts5r3ImKvbuF3B5QSOb0HpgPfu+89u/Lw6pTMF6UiqpMtz/7b/qQQ==",
   "success": true,
-  "projectFilePath": "E:\\projects\\nursuryProject\\aims-nursury-api\\posCoreModuleApi\\posCoreModuleApi.csproj",
+  "projectFilePath": "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\posCoreModuleApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sys\\.nuget\\packages\\dapper\\2.1.24\\dapper.2.1.24.nupkg.sha512",
     "C:\\Users\\sys\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

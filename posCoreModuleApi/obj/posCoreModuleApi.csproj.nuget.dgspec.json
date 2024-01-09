@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\projects\\nursuryProject\\aims-nursury-api\\posCoreModuleApi\\posCoreModuleApi.csproj": {}
+    "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\posCoreModuleApi.csproj": {}
   },
   "projects": {
-    "E:\\projects\\nursuryProject\\aims-nursury-api\\posCoreModuleApi\\posCoreModuleApi.csproj": {
+    "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\posCoreModuleApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\projects\\nursuryProject\\aims-nursury-api\\posCoreModuleApi\\posCoreModuleApi.csproj",
+        "projectUniqueName": "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\posCoreModuleApi.csproj",
         "projectName": "posCoreModuleApi",
-        "projectPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\posCoreModuleApi\\posCoreModuleApi.csproj",
+        "projectPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\posCoreModuleApi.csproj",
         "packagesPath": "C:\\Users\\sys\\.nuget\\packages\\",
-        "outputPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\posCoreModuleApi\\obj\\",
+        "outputPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sys\\AppData\\Roaming\\NuGet\\NuGet.Config"
