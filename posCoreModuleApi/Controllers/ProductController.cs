@@ -922,8 +922,8 @@ namespace posCoreModuleApi.Controllers
                                         }
                                     }
                                 }
-                            }
                             cellValues.Add(product);
+                            }
                         }
                         // return Ok(cellValues);
 

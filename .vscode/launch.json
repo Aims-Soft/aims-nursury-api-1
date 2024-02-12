@@ -9,9 +9,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/UMISModuleApi/bin/Debug/net5.0/UMISModuleApi.dll",
+      "program": "${workspaceFolder}/posCoreModuleApi/bin/Debug/net7.0/posCoreModuleApi.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/UMISModuleApi",
+      "cwd": "${workspaceFolder}/posCoreModuleApi",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
