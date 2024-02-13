@@ -843,6 +843,31 @@ namespace posCoreModuleApi.Controllers
 
         }
 
+        [HttpPost("saveProductFromJson")]
+        public IActionResult saveProductFromJson(ImportProductCreation obj)
+        {
+            try
+            {
+                int rowAffected = 0;
+                cmd = "CALL public.saveProductFromExcel('"+ obj.json +"'::jsonb," + obj.companyID + "," + obj.businessID + "," + obj.branchID + "," + obj.moduleId + "," + obj.userID + ")";
+                    if(obj.userID != 0 && obj.moduleId !=0)
+                    {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    }
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    {
+                        rowAffected = con.Execute(cmd);
+                    }
+                return Ok(rowAffected);
+                // return Ok(new { message = response });
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
+
         [HttpPost("saveProductFromExcel")]
         public IActionResult saveProductFromExcel(ProductFromExcel obj)
         {
@@ -926,11 +951,18 @@ namespace posCoreModuleApi.Controllers
                             }
                         }
                         // return Ok(cellValues);
-
-                        
+                        if(obj.userID != 0 && obj.moduleId !=0)
+                        {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
+                        // List<Category> categories = new List<Category>();
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    {
+                        con.Open();
 
                         foreach (var item in cellValues)
                         {
+                            //  = item.product_category
                             cmd2 = "select \"categoryName\" from category where \"isDeleted\"::int = 0 AND \"categoryName\" = '" + item.product_category + "' AND \"businessid\" = " + obj.businessID + " AND \"companyid\" = " + obj.companyID + " ";
                             appMenuCategory = (List<Category>)_dapperQuery.StrConQry<Category>(cmd2, obj.userID,obj.moduleId);
 
@@ -947,14 +979,14 @@ namespace posCoreModuleApi.Controllers
                             {
                                 cmd = "insert into public.category (\"categoryID\",\"categoryName\", \"level1\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + newCategoryID + "','" + item.product_category + "',1, '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + ", " + obj.branchID + ")";
 
-                                if(obj.userID != 0 && obj.moduleId !=0)
-                                {
-                                saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                                }
-                                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                                {
+                                // if(obj.userID != 0 && obj.moduleId !=0)
+                                // {
+                                // saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                                // }
+                                // using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                                // {
                                     rowAffected = con.Execute(cmd);
-                                }
+                                // }
                             }
                         }
                         var distinctSubCategoryName = cellValues.Select(p => new{p.product_category,p.product_sub_category}).Distinct().ToList();
@@ -983,21 +1015,22 @@ namespace posCoreModuleApi.Controllers
                             {
                                 cmd = "insert into public.category (\"categoryID\",\"categoryName\",\"parentCategoryID\", \"level1\", \"level2\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + newCategoryID + "','" + item.product_sub_category + "'," + parentCategoryID + ",1,1, '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + ", " + obj.branchID + ")";
 
-                                if(obj.userID != 0 && obj.moduleId !=0)
-                                {
-                                saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                                }
-                                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                                {
+                                // if(obj.userID != 0 && obj.moduleId !=0)
+                                // {
+                                // saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                                // }
+                                // using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                                // {
                                     rowAffected = con.Execute(cmd);
-                                }
+                                // }
                             }
                         }
 
                         foreach (var item in cellValues)
                         {
+                            var prodID = 0;
                             cmd2 = "select \"productName\" from product where \"isDeleted\"::int = 0 AND \"productName\" = '" + item.product_name + "' AND \"businessid\" = " + obj.businessID + " AND \"companyid\" = " + obj.companyID + "";
-                            appMenuProduct = (List<Product>)_dapperQuery.StrConQry<Product>(cmd2, obj.userID,obj.moduleId);
+                            appMenuProduct = (List<Product>)_dapperQuery.StrConQry<Product>(cmd2,obj.userID,obj.moduleId);
 
                             if (appMenuProduct.Count > 0)
                                 productName = appMenuProduct[0].productName;
@@ -1007,42 +1040,47 @@ namespace posCoreModuleApi.Controllers
                             forCategoryID = (List<Category>)_dapperQuery.StrConQry<Category>(cmd6,  obj.userID,obj.moduleId);
 
                             categoryID = forCategoryID[0].categoryID;
-                            
+                            int productID;
                             if (productName == "")
                             {
-                                string productIDQuery = "SELECT COALESCE(MAX(\"productID\"), 0) + 1 FROM public.product";
+                                List<Product> appMenuProductID = new List<Product>();
+                                cmd = "SELECT \"productID\" FROM public.product ORDER BY \"productID\" DESC LIMIT 1";
+                                appMenuProductID = (List<Product>)dapperQuery.QryResult<Product>(cmd, _dbCon);
 
-                                int productID;
-                                if (obj.userID != 0 && obj.moduleId != 0)
-                                {
-                                    saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
-                                }
+                                productID = appMenuProductID[0].productID;
+                                // if (obj.userID != 0 && obj.moduleId != 0)
+                                // {
+                                //     saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
+                                // }
 
-                                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                                using (NpgsqlCommand command = new NpgsqlCommand(productIDQuery, con))
-                                {
-                                    con.Open();
-                                    productID = int.Parse(command.ExecuteScalar().ToString());
-                                }
+                                // using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                                // using (NpgsqlCommand command = new NpgsqlCommand(productIDQuery, con))
+                                // {
+                                //     con.Open();
+                                //     productID = int.Parse(command.ExecuteScalar().ToString());
+                                // }
                                 cmd = "insert into public.product (\"productID\",\"categoryID\", \"productName\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + productID + "','" + categoryID + "', '" + item.product_name + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + ", " + obj.branchID + ")";
                             }
                             else
                             {
                                 found = true;
+                                rowAffected = 1;
+                                cmd2 = "SELECT \"productID\" FROM public.product Where \"productName\" = '" + productName + "'";
+                                appMenuProduct = (List<Product>)_dapperQuery.StrConQry<Product>(cmd2, obj.userID,obj.moduleId);
+                                productID = appMenuProduct[0].productID;
                             }
-
 
                             if (found == false)
                             {
                                 
-                                if(obj.userID != 0 && obj.moduleId !=0)
-                                {
-                                saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                                }
-                                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                                {
+                                // if(obj.userID != 0 && obj.moduleId !=0)
+                                // {
+                                // saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                                // }
+                                // using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                                // {
                                     rowAffected = con.Execute(cmd);
-                                }
+                                // }
                             }
 
                             if (rowAffected > 0)
@@ -1050,7 +1088,7 @@ namespace posCoreModuleApi.Controllers
                                 cmd2 = "SELECT \"productID\" FROM public.product order by \"productID\" desc limit 1";
                                 appMenuProduct = (List<Product>)_dapperQuery.StrConQry<Product>(cmd2, obj.userID,obj.moduleId);
 
-                                var prodID = appMenuProduct[0].productID;
+                                productID = appMenuProduct[0].productID;
 
                                 if (item.product_barcode == "")
                                 {
@@ -1073,67 +1111,91 @@ namespace posCoreModuleApi.Controllers
                                 }
                                 else
                                 {
-                                string barcodeIDQuery = "SELECT COALESCE(MAX(\"barcodeID\"), 0) + 1 FROM public.barcode";
+                                // string barcodeIDQuery = "SELECT COALESCE(MAX(\"barcodeID\"), 0) + 1 FROM public.barcode";
 
                                 int barcodeID;
 
-                                if (obj.userID != 0 && obj.moduleId != 0)
+                                // if (obj.userID != 0 && obj.moduleId != 0)
+                                // {
+                                //     saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
+                                // }
+
+                                List<Product> appMenuBarcodeID = new List<Product>();
+                                // cmd = "SELECT \"barcodeID\" FROM public.barcode ORDER BY \"barcodeID\" DESC LIMIT 1";
+                                // appMenuBarcodeID = (List<Product>)_dapperQuery.StrConQry<Product>(cmd3, obj.userID,obj.moduleId);
+                                cmd3 = "select \"barcodeID\" from public.barcode order by \"barcodeID\" desc limit 1";
+                                appMenuBarcodeID = (List<Product>)_dapperQuery.StrConQry<Product>(cmd3, obj.userID,obj.moduleId);
+                                
+                                if(appMenuBarcodeID.Count == 0)
                                 {
-                                    saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
+                                    barcodeID = 1;
+                                }else{
+                                    barcodeID = appMenuBarcodeID[0].barcodeID+1;
                                 }
 
-                                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                                using (NpgsqlCommand command = new NpgsqlCommand(barcodeIDQuery, con))
-                                {
-                                    con.Open();
-                                    barcodeID = int.Parse(command.ExecuteScalar().ToString());
-                                }
+                                // using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                                // using (NpgsqlCommand command = new NpgsqlCommand(barcodeIDQuery, con))
+                                // {
+                                //     con.Open();
+                                //     barcodeID = int.Parse(command.ExecuteScalar().ToString());
+                                // }
 
                                 // end for autoincrement of barcodeID
-                                cmd4 = "INSERT INTO public.barcode(\"barcodeID\",\"productID\", \"barcode1\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values (" + barcodeID + "," + prodID + ", '" + item.product_barcode + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + ")";
+                                cmd4 = "INSERT INTO public.barcode(\"barcodeID\",\"productID\", \"barcode1\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\") values (" + barcodeID + "," + productID + ", '" + item.product_barcode + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + ")";
 
                                 }
 
-                                if(obj.userID != 0 && obj.moduleId !=0)
-                                {
-                                saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                                }
-                                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                                {
+                                // if(obj.userID != 0 && obj.moduleId !=0)
+                                // {
+                                // saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                                // }
+                                // using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                                // {
                                     rowAffected2 = con.Execute(cmd4);
-                                }
+                                // }
 
                                 // start for autoincrement of productPrice
-                                string pPriceIDQuery = "SELECT COALESCE(MAX(\"pPriceID\"), 0) + 1 FROM public.\"productPrice\"";
+                                // string pPriceIDQuery = "SELECT COALESCE(MAX(\"pPriceID\"), 0) + 1 FROM public.\"productPrice\"";
 
                                 int pPriceID;
 
-                                if (obj.userID != 0 && obj.moduleId != 0)
+                                List<Product> appMenupPriceID = new List<Product>();
+                                cmd = "SELECT \"pPriceID\" FROM public.\"productPrice\" ORDER BY \"pPriceID\" DESC LIMIT 1";
+                                appMenupPriceID = (List<Product>)_dapperQuery.StrConQry<Product>(cmd, obj.userID,obj.moduleId);
+                                
+                                if(appMenupPriceID.Count == 0)
                                 {
-                                    saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
+                                    pPriceID = 1;
+                                }else{
+                                    pPriceID = appMenupPriceID[0].pPriceID+1;
                                 }
+                                // if (obj.userID != 0 && obj.moduleId != 0)
+                                // {
+                                //     saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
+                                // }
 
-                                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                                using (NpgsqlCommand command = new NpgsqlCommand(pPriceIDQuery, con))
-                                {
-                                    con.Open();
-                                    pPriceID = int.Parse(command.ExecuteScalar().ToString());
-                                }
+                                // using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                                // using (NpgsqlCommand command = new NpgsqlCommand(pPriceIDQuery, con))
+                                // {
+                                //     con.Open();
+                                //     pPriceID = int.Parse(command.ExecuteScalar().ToString());
+                                // }
 
                                 // end for autoincrement of productPrice
-                                cmd5 = "insert into public.\"productPrice\" (\"pPriceID\",\"productID\", \"costPrice\", \"salePrice\", \"retailPrice\", \"wholeSalePrice\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values (" + pPriceID + "," + prodID + ", " + item.cost_price + ", " + item.sale_price + ", " + item.sale_price + ", " + item.cost_price + ", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchID + "," + obj.businessID + "," + obj.companyID + ")";
-                                if(obj.userID != 0 && obj.moduleId !=0)
-                                {
-                                saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                                }
-                                using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                                {
+                                cmd5 = "insert into public.\"productPrice\" (\"pPriceID\",\"productID\", \"costPrice\", \"salePrice\", \"retailPrice\", \"wholeSalePrice\", \"createdOn\", \"createdBy\", \"isDeleted\",\"branchid\",\"businessid\",\"companyid\") values (" + pPriceID + "," + productID + ", " + item.cost_price + ", " + item.sale_price + ", " + item.sale_price + ", " + item.cost_price + ", '" + curDate + "', " + obj.userID + ", B'0'," + obj.branchID + "," + obj.businessID + "," + obj.companyID + ")";
+                                // if(obj.userID != 0 && obj.moduleId !=0)
+                                // {
+                                // saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                                // }
+                                // using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                                // {
                                     rowAffected3 = con.Execute(cmd5);
-                                }
+                                // }
                             }
                         }
 
-                        
+                        con.Close();
+                        }
                     }
                 }
 
