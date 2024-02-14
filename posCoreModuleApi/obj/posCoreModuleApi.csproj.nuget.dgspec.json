@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\posCoreModuleApi.csproj": {}
+    "d:\\aims-nursury-api\\posCoreModuleApi\\posCoreModuleApi.csproj": {}
   },
   "projects": {
-    "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\posCoreModuleApi.csproj": {
+    "d:\\aims-nursury-api\\posCoreModuleApi\\posCoreModuleApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\posCoreModuleApi.csproj",
+        "projectUniqueName": "d:\\aims-nursury-api\\posCoreModuleApi\\posCoreModuleApi.csproj",
         "projectName": "posCoreModuleApi",
-        "projectPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\posCoreModuleApi.csproj",
-        "packagesPath": "C:\\Users\\sys\\.nuget\\packages\\",
-        "outputPath": "E:\\projects\\nursuryProject\\aims-nursury-api\\poscoremoduleapi\\obj\\",
+        "projectPath": "d:\\aims-nursury-api\\posCoreModuleApi\\posCoreModuleApi.csproj",
+        "packagesPath": "C:\\Users\\hamma\\.nuget\\packages\\",
+        "outputPath": "d:\\aims-nursury-api\\posCoreModuleApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\sys\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\hamma\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -41,6 +41,10 @@
             "Dapper": {
               "target": "Package",
               "version": "[2.1.24, )"
+            },
+            "EPPlus": {
+              "target": "Package",
+              "version": "[7.0.4, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -78,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.404\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.406\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace posCoreModuleApi.Controllers
 {
@@ -844,29 +845,102 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpPost("saveProductFromJson")]
-        public IActionResult saveProductFromJson(ImportProductCreation obj)
+        public IActionResult saveProductFromJson([FromBody] ImportProductCreation obj)
         {
             try
             {
                 int rowAffected = 0;
-                cmd = "CALL public.saveProductFromExcel('"+ obj.json +"'::jsonb," + obj.companyID + "," + obj.businessID + "," + obj.branchID + "," + obj.moduleId + "," + obj.userID + ")";
+                // string data;
+                // using (Stream stream = new FileStream("example.txt", FileMode.Open))
+                // using (StreamReader reader = new StreamReader(stream))
+                // {
+                //     // Read your data here
+                //     data = reader.ReadToEnd();
+                // }
+                cmd = "CALL public.saveProductFromExcel('"+ obj.json +"'," + obj.companyID + "," + obj.businessID + "," + obj.branchID + "," + obj.moduleId + "," + obj.userID + ")";
                     if(obj.userID != 0 && obj.moduleId !=0)
                     {
                         saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
                     }
-                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    // using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
                     {
-                        rowAffected = con.Execute(cmd);
+                        using (var con = new NpgsqlConnection(saveConStr))
+                        {
+                            con.Open();
+
+                            using (var npgsqlCmd = new NpgsqlCommand(cmd, con))
+                            {
+                                npgsqlCmd .CommandTimeout = 3000; // Set the command timeout in seconds
+                                // Execute the command
+                                // rowAffected = con.Execute(cmd);
+                                rowAffected = npgsqlCmd.ExecuteNonQuery();
+                            }
+                        }
+                        
                     }
                 return Ok(rowAffected);
                 // return Ok(new { message = response });
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 return Ok(e);
             }
 
         }
+
+        // [HttpPost("saveProductFromJson")]
+        // public async Task<IActionResult> SaveProductFromJson([FromBody] ImportProductCreation obj)
+        // {
+        //     try
+        //     {
+        //         int rowAffected = 0;
+
+        //         using (Stream stream = HttpContext.Request.Body)
+        //         using (StreamReader reader = new StreamReader(stream))
+        //         {
+        //             // Read the JSON data from the request stream
+        //             string jsonData = await reader.ReadToEndAsync();
+
+        //             // Process jsonData or pass it to your procedure
+        //             // Ensure your PostgreSQL procedure can handle the JSON data directly
+
+        //             if (obj.userID != 0 && obj.moduleId != 0)
+        //             {
+        //                 saveConStr = _dapperQuery.FindMe(obj.userID, obj.moduleId);
+        //             }
+
+        //             using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+        //             {
+
+        //                 // cmd = "CALL public.saveProductFromExcel('"+ jsonData +"'," + obj.companyID + "," + obj.businessID + "," + obj.branchID + "," + obj.moduleId + "," + obj.userID + ")";
+        //                 // rowAffected = con.Execute(cmd);
+                                
+        //                 // Use parameterized queries to avoid SQL injection
+                        
+        //                 // rowAffected = con.Execute("CALL public.saveProductFromExcel(@json, @CompanyID, @BusinessID, @BranchID, @ModuleID, @UserID)",
+        //                     // new
+        //                     // {
+        //                     //     json = jsonData,
+        //                     //     obj.companyID,
+        //                     //     obj.businessID,
+        //                     //     obj.branchID,
+        //                     //     obj.moduleId,
+        //                     //     obj.userID
+        //                     // });
+        //             }
+        //         }
+
+        //         return Ok(rowAffected);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Console.WriteLine(e.ToString());
+        //         return Ok(e);
+        //     }
+        // }
+
+
 
         [HttpPost("saveProductFromExcel")]
         public IActionResult saveProductFromExcel(ProductFromExcel obj)

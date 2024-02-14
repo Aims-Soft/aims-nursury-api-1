@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,15 @@ namespace posCoreModuleApi
             services.Configure<conStr>(Configuration.GetSection("conStr"));
             services.AddScoped<dapperQuery>();
 
+            // services.Configure<IISServerOptions>(options =>
+            // {
+            //     options.MaxRequestBodySize = int.MaxValue;
+            // });
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueLengthLimit = int.MaxValue;
+                options.MultipartBodyLengthLimit = int.MaxValue;
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
