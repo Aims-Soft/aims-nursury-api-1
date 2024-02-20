@@ -850,6 +850,7 @@ namespace posCoreModuleApi.Controllers
             try
             {
                 int rowAffected = 0;
+                var response = "";
                 // string data;
                 // using (Stream stream = new FileStream("example.txt", FileMode.Open))
                 // using (StreamReader reader = new StreamReader(stream))
@@ -878,7 +879,16 @@ namespace posCoreModuleApi.Controllers
                         }
                         
                     }
-                return Ok(rowAffected);
+                if (rowAffected != 0)
+                {
+                    response = "Success";
+                    return Ok(new { message = response });
+                }
+                else
+                {
+                    response = "Something went wrong";
+                    return BadRequest(new { message = response });
+                }
                 // return Ok(new { message = response });
             }
             catch (Exception e)
