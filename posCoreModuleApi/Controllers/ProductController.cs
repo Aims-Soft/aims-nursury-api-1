@@ -877,7 +877,6 @@ namespace posCoreModuleApi.Controllers
                                 rowAffected = npgsqlCmd.ExecuteNonQuery();
                             }
                         }
-                        
                     }
                 if (rowAffected != 0)
                 {
@@ -896,7 +895,6 @@ namespace posCoreModuleApi.Controllers
                 Console.WriteLine(e.ToString());
                 return Ok(e);
             }
-
         }
 
         // [HttpPost("saveProductFromJson")]
