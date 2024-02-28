@@ -281,9 +281,7 @@ namespace posCoreModuleApi.Controllers
         {
             try
             {
-            
-                    cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + " and \"type\" = 'customer' order by \"partyID\" desc";
-                
+                cmd = "select * from public.party where \"isDeleted\"::int = 0 AND \"branchID\" = " + branchID + " and \"type\" = 'customer' order by \"partyID\" desc";
                 var appMenu = _dapperQuery.StrConQry<Customers>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
