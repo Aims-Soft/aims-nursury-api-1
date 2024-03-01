@@ -102,14 +102,14 @@ namespace posCoreModuleApi.Controllers
 
                 if (appMenuShift.Count > 0)
                 {
-                    newShiftID = appMenuShift[0].shiftID;
+                    newShiftID = appMenuShift[0].shiftID + 1;
                 }
                 else
                 {
                     newShiftID = 1;
                 }
                 
-                cmd2 = "insert into public.tbl_shifts (\"shiftID\", \"shiftDate\", \"shiftStartTime\", \"userID\", \"openingBalance\",\"counterID\" ,\"createdOn\", \"createdBy\", \"isDeleted\") values (" + newShiftID + ", '" + obj.shiftDate + "', '" + obj.shiftStartTime + "', " + obj.userID + ", " + obj.openingBalance + ", "+obj.counterID+" ,'" + curDate + "', " + obj.userID + ", B'0')";
+                cmd2 = "insert into public.tbl_shifts (\"shiftID\", \"shiftDate\", \"shiftStartTime\", \"userID\", \"openingBalance\",\"counterID\" ,\"createdOn\", \"createdBy\", \"isDeleted\") values (" + newShiftID + ", '" + obj.shiftDate + "', '" + obj.shiftStartTime + "', " + obj.counterUserID + ", " + obj.openingBalance + ", "+obj.counterID+" ,'" + curDate + "', " + obj.userID + ", B'0')";
                
 
                 if(obj.userID != 0 && obj.moduleId !=0)
@@ -141,7 +141,7 @@ namespace posCoreModuleApi.Controllers
 
                         if (appMenuDetail.Count > 0)
                         {
-                            newCounterDetailID = appMenuDetail[0].counterDetailID;
+                            newCounterDetailID = appMenuDetail[0].counterDetailID + 1;
                         }
                         else
                         {

@@ -12,6 +12,7 @@ namespace posCoreModuleApi.Entities
         public string shiftStartTime { get; set; }
         public int openingBalance { get; set; }
         public int counterID { get; set; }
+        public int counterUserID { get; set; }
         public int userID { get; set; }
         public string json { get; set; }
     }
