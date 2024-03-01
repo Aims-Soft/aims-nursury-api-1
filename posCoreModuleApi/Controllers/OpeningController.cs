@@ -148,7 +148,7 @@ namespace posCoreModuleApi.Controllers
                             newCounterDetailID = 1;
                         }
 
-                        cmd3 = "insert into public.\"tbl_counter_detail\" (\"counterDetailID\", \"quantity\", \"shiftID\", \"currencyID\", \"counterFlagID\", \"totalAmount\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newCounterDetailID + "', '" + item.quantity + "', '" + newShiftID + "', '" + item.currencyID + "', '" + item.counterFlagID + "','" + item.totalAmount + "', '" + curDate + "', " + obj.userID + ", B'0')";
+                        cmd3 = "insert into public.\"tbl_counter_detail\" (\"counterDetailID\", \"quantity\", \"shiftID\", \"currencyID\", \"counterFlagID\", \"totalAmount\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newCounterDetailID + "', '" + item.quantity + "', '" + newShiftID + "', '" + item.currencyID + "', 1,'" + item.totalAmount + "', '" + curDate + "', " + obj.userID + ", B'0')";
 
                          if(obj.userID != 0 && obj.moduleId !=0)
                     {
