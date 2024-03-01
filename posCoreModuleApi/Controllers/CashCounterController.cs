@@ -55,7 +55,7 @@ namespace posCoreModuleApi.Controllers
                 var found = false;
                 var counter = "";
                 var newCounterID = 0;
-
+                List<Counter> appMenuCounterID = new List<Counter>();
                 if (obj.spType == "insert")
                 {
                     List<Counter> appMenuCounter = new List<Counter>();
@@ -65,16 +65,20 @@ namespace posCoreModuleApi.Controllers
                     if (appMenuCounter.Count > 0)
                         counter = appMenuCounter[0].counterName;
 
-                    List<Counter> menuCounterID = new List<Counter>();
-                    cmd2 = "select \"counterID\" from tbl_counter ORDER BY \"counterID\" DESC LIMIT 1";
-                    menuCounterID = (List<Counter>)dapperQuery.QryResult<Counter>(cmd2, _dbCon);
+                    cmd2 = "select (max(\"counterID\")+1) as \"counterID\" from \"tbl_counter\" ";
+                    appMenuCounterID = (List<Counter>)_dapperQuery.StrConQry<Counter>(cmd2, obj.userID,obj.moduleId);
 
-                    if(menuCounterID.Count == 0)
-                        {
-                            newCounterID = 1;
-                        }else{
-                            newCounterID = menuCounterID[0].counterID+1;
-                        }
+                    if (appMenuCounterID.Count > 0)
+                    {
+                        newCounterID = appMenuCounterID[0].counterID;
+                    }
+
+                    // if(menuCounterID.Count == 0)
+                    //     {
+                    //         newCounterID = 1;
+                    //     }else{
+                    //         newCounterID = menuCounterID[0].counterID+1;
+                    //     }
 
                     if (obj.counterID == 0)
                     {
