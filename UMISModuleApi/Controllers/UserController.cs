@@ -230,6 +230,29 @@ namespace UMISModuleAPI.Controllers
 
         }
 
+        [HttpGet("getUserCounter")]
+        public IActionResult getUserCounter(int branchID)
+        {
+            try
+            {  
+                cmd = "select u.\"userID\",u.\"empName\",u.\"branchID\" from users u Join "+
+                 " user_roles ur on u.\"userID\" = ur.\"userId\" join "+
+                 " roles as r on r.\"roleID\" = ur.\"roleId\" "+
+                   " where r.\"roleTitle\" = 'Sales Man' and u.\"branchID\" = "+branchID+""; 
+               
+                // cmd = "SELECT * FROM \"view_allUser\" where \"companyID\" = " + companyID + " AND \"businessID\" = " + businessID + ";";    
+                
+                var appMenu = dapperQuery.Qry<UserDetail>(cmd, _dbCon);
+
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
+
         [HttpPost("saveUser")]
         public IActionResult saveUser(UserCreation obj)
         {
