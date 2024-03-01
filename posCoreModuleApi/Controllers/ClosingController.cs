@@ -29,6 +29,20 @@ namespace posCoreModuleApi.Controllers
             _dapperQuery = dapperQuery;
         }
 
+        [HttpGet("getClosingReconciliation")]
+        public IActionResult getClosingReconciliation(int userID, int moduleId,string curDate,int counterID,int employeeID)
+        {
+            try
+            {
+                cmd = "Select * From \"fun_closingReconciliation\"('" + curDate + "'::character varying," + counterID + "," + employeeID + ")";
+                var appMenu = _dapperQuery.StrConQry<ClosingReconciliation>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
 
         [HttpPost("saveClosingBalance")]
         public IActionResult saveClosingBalance(ClosingCreation obj)
