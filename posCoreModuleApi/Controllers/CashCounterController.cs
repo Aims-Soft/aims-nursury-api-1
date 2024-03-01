@@ -65,7 +65,7 @@ namespace posCoreModuleApi.Controllers
                     if (appMenuCounter.Count > 0)
                         counter = appMenuCounter[0].counterName;
 
-                    cmd2 = "select (max(\"counterID\")+1) as \"counterID\" from \"tbl_counter\" ";
+                    cmd2 = "select (coalesce(max(\"counterID\"),0)+1) as \"counterID\" from \"tbl_counter\" ";
                     appMenuCounterID = (List<Counter>)_dapperQuery.StrConQry<Counter>(cmd2, obj.userID,obj.moduleId);
 
                     if (appMenuCounterID.Count > 0)
