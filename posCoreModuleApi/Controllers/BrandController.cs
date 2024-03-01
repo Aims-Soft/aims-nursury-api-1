@@ -41,7 +41,6 @@ namespace posCoreModuleApi.Controllers
             {
                 return Ok(e);
             }
-
         }
 
         [HttpPost("saveBrand")]
