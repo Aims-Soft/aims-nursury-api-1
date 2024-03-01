@@ -92,6 +92,17 @@ namespace posCoreModuleApi.Controllers
                         cmd = "update public.tbl_counter set \"counterName\" = '" + obj.counterName + "', \"counterNo\" = " + obj.counterNo + ",\"grassAmount\" = " + obj.grassAmount + ", \"modifiedOn\" = '" + curDate + "',\"modifiedBy\" = " + obj.userID + " where \"counterID\" = " + obj.counterID + ";";
                     }   
                 }
+                else if (obj.spType = "delete")
+                {
+                    if (obj.counterID != 0)
+                    {
+                        cmd = "update public.tbl_counter set \"isDeleted\" = B'0',\"deletedOn\" = '" + curDate + "',\"deletedBy\" = " + obj.userID + " where \"counterID\" = " + obj.counterID + ";";
+                    }
+                    else
+                    {
+                        found == true;
+                    }
+                }
                 if (found == false)
                 {
                     if(obj.userID != 0 && obj.moduleId !=0)
