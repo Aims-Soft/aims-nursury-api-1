@@ -44,6 +44,21 @@ namespace posCoreModuleApi.Controllers
             }
         }
 
+        [HttpGet("getClosingSaleDetail")]
+        public IActionResult getClosingSaleDetail(int userID, int moduleId,string curDate,int employeeID)
+        {
+            try
+            {
+                cmd = "Select * From \"fun_closingSaleDetails\"('" + curDate + "'::character varying," + employeeID + ")";
+                var appMenu = _dapperQuery.StrConQry<ClosingSaleDetail>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
         [HttpPost("saveClosingBalance")]
         public IActionResult saveClosingBalance(ClosingCreation obj)
         {
