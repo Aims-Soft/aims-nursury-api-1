@@ -46,6 +46,23 @@ namespace posCoreModuleApi.Controllers
 
         }
 
+        [HttpGet("getCounterFlag")]
+        public IActionResult getCounterFlag(int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select * from \"tbl_counter_flag\"";
+
+                var appMenu = _dapperQuery.StrConQry<CounterFlag>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
+
         [HttpGet("getCurrency")]
         public IActionResult getCurrency(int userID, int moduleId)
         {
