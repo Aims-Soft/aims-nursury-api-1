@@ -29,12 +29,12 @@ namespace posCoreModuleApi.Controllers
             _dapperQuery = dapperQuery;
         }
 
-        [HttpGet("getOrderDetail")]
-        public IActionResult getOrder(int branchId, int userID, int moduleId)
+        [HttpGet("getCounter")]
+        public IActionResult getCounter(int branchId, int userID, int moduleId)
         {
             try
             {
-                cmd = "select * from \"tbl_counter\" where  branchID = "+branchId+"";
+                cmd = "select * from \"tbl_counter\" where  \"branchID\" = "+branchId+"";
 
                 // cmd = "select * from \"view_saleReturn\" where \"invoiceNo\" = " + invoiceNo + " and \"isDeleted\"::int = 0 and \"productID\" is not null";
                 var appMenu = _dapperQuery.StrConQry<Counter>(cmd,userID,moduleId);
