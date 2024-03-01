@@ -36,8 +36,24 @@ namespace posCoreModuleApi.Controllers
             {
                 cmd = "select * from \"tbl_counter\" where  \"branchID\" = "+branchId+"";
 
-                // cmd = "select * from \"view_saleReturn\" where \"invoiceNo\" = " + invoiceNo + " and \"isDeleted\"::int = 0 and \"productID\" is not null";
                 var appMenu = _dapperQuery.StrConQry<Counter>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
+
+        [HttpGet("getCurrency")]
+        public IActionResult getCurrency(int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select \"currencyID\",\"currencyTitle\",\"denomination\" from tbl_currency";
+
+                var appMenu = _dapperQuery.StrConQry<Currency>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
