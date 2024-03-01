@@ -28,7 +28,7 @@ namespace posCoreModuleApi.Controllers
         }
 
         [HttpGet("getCounter")]
-        public IActionResult getCounter(int businessid,int companyid)
+        public IActionResult getCounter(int businessid,int companyid,int userID, int moduleId)
         {
             try
             {
@@ -56,10 +56,10 @@ namespace posCoreModuleApi.Controllers
                 var counter = "";
                 var newCounterID = 0;
 
-                if (obj.spType = "insert")
+                if (obj.spType == "insert")
                 {
                     List<Counter> appMenuCounter = new List<Counter>();
-                    cmd2 = "select \"counterName\" from tbl_counter where \"isDeleted\"::int = 0 and \"counterName\" = '" + obj.brandName + "' AND \"businessID\" = " + obj.businessid + " AND \"companyID\" = " + obj.companyid + "";
+                    cmd2 = "select \"counterName\" from tbl_counter where \"isDeleted\"::int = 0 and \"counterName\" = '" + obj.counterName + "' AND \"businessID\" = " + obj.businessid + " AND \"companyID\" = " + obj.companyid + "";
                     appMenuCounter = (List<Counter>)_dapperQuery.StrConQry<Counter>(cmd2, obj.userID,obj.moduleId);
 
                     if (appMenuCounter.Count > 0)
@@ -80,7 +80,7 @@ namespace posCoreModuleApi.Controllers
                     {
                         if (counter == "")
                         {
-                            cmd = "insert into public.tbl_counter (\"counterID\",\"counterName\",\"counterNo\",\"grassAmount\",\"createdOn\",\"createdBy\",\"isDeleted\",\"businessID\",\"companyID\") values (" + newCounterID + ", '" + obj.counterName + "'," + obj.counterNo + "," + obj.grassAmount + ", '" + curDate + "'," + obj.userID + ",B'0'," + obj.businessID + "," + obj.companyID + ")";
+                            cmd = "insert into public.tbl_counter (\"counterID\",\"counterName\",\"counterNo\",\"grassAmount\",\"createdOn\",\"createdBy\",\"isDeleted\",\"businessID\",\"companyID\") values (" + newCounterID + ", '" + obj.counterName + "'," + obj.counterNo + "," + obj.grassAmount + ", '" + curDate + "'," + obj.userID + ",B'0'," + obj.businessid + "," + obj.companyid + ")";
                         }
                         else
                         {
@@ -92,7 +92,7 @@ namespace posCoreModuleApi.Controllers
                         cmd = "update public.tbl_counter set \"counterName\" = '" + obj.counterName + "', \"counterNo\" = " + obj.counterNo + ",\"grassAmount\" = " + obj.grassAmount + ", \"modifiedOn\" = '" + curDate + "',\"modifiedBy\" = " + obj.userID + " where \"counterID\" = " + obj.counterID + ";";
                     }   
                 }
-                else if (obj.spType = "delete")
+                else if (obj.spType == "delete")
                 {
                     if (obj.counterID != 0)
                     {
@@ -100,7 +100,7 @@ namespace posCoreModuleApi.Controllers
                     }
                     else
                     {
-                        found == true;
+                        found = true;
                     }
                 }
                 if (found == false)
