@@ -100,7 +100,7 @@ namespace posCoreModuleApi.Controllers
                 {
                     if (obj.counterID != 0)
                     {
-                        cmd = "update public.tbl_counter set \"isDeleted\" = B'0',\"deletedOn\" = '" + curDate + "',\"deletedBy\" = " + obj.userID + " where \"counterID\" = " + obj.counterID + ";";
+                        cmd = "update public.tbl_counter set \"isDeleted\" = B'1',\"deletedOn\" = '" + curDate + "',\"deletedBy\" = " + obj.userID + " where \"counterID\" = " + obj.counterID + ";";
                     }
                     else
                     {
