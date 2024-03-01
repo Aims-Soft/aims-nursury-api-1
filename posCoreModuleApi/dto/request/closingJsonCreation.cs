@@ -1,6 +1,6 @@
 namespace posCoreModuleApi.Entities
 {
-    public class OpeningJsonCreation
+    public class ClosingJsonCreation
     {
         public int counterDetailID { get; set; }
         public int quantity { get; set; }

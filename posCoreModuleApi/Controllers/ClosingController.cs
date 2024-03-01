@@ -16,72 +16,22 @@ namespace posCoreModuleApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OpeningController : ControllerBase
+    public class ClosingController : ControllerBase
     {
         private readonly IOptions<conStr> _dbCon;
         private readonly dapperQuery _dapperQuery;
         private string cmd, cmd2,cmd3,cmd4;
         public string saveConStr;
 
-        public OpeningController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
+        public ClosingController(dapperQuery dapperQuery,IOptions<conStr> dbCon)
         {
             _dbCon = dbCon;
             _dapperQuery = dapperQuery;
         }
 
-        [HttpGet("getCounter")]
-        public IActionResult getCounter(int branchId, int userID, int moduleId)
-        {
-            try
-            {
-                cmd = "select * from \"tbl_counter\" where  \"branchID\" = "+branchId+"";
 
-                var appMenu = _dapperQuery.StrConQry<Counter>(cmd,userID,moduleId);
-                return Ok(appMenu);
-            }
-            catch (Exception e)
-            {
-                return Ok(e);
-            }
-
-        }
-
-        [HttpGet("getCounterFlag")]
-        public IActionResult getCounterFlag(int userID, int moduleId)
-        {
-            try
-            {
-                cmd = "select * from \"tbl_counter_flag\"";
-
-                var appMenu = _dapperQuery.StrConQry<CounterFlag>(cmd,userID,moduleId);
-                return Ok(appMenu);
-            }
-            catch (Exception e)
-            {
-                return Ok(e);
-            }
-
-        }
-
-        [HttpGet("getCurrency")]
-        public IActionResult getCurrency(int userID, int moduleId)
-        {
-            try
-            {
-                cmd = "select \"currencyID\",\"currencyTitle\",\"denomination\" from tbl_currency";
-
-                var appMenu = _dapperQuery.StrConQry<Currency>(cmd,userID,moduleId);
-                return Ok(appMenu);
-            }
-            catch (Exception e)
-            {
-                return Ok(e);
-            }
-
-        }
-
-        [HttpPost("saveOpeningBalance")]
-        public IActionResult saveOpeningBalance(OpeningCreation obj)
+        [HttpPost("saveClosingBalance")]
+        public IActionResult saveClosingBalance(ClosingCreation obj)
         {
             try
             {
@@ -96,20 +46,20 @@ namespace posCoreModuleApi.Controllers
                 int newCounterDetailID = 0;
                 var response = "";
 
-                List<Shift> appMenuShift = new List<Shift>();
-                cmd = "select \"shiftID\" from tbl_shifts ORDER BY \"shiftID\" DESC LIMIT 1";
-                appMenuShift = (List<Shift>)_dapperQuery.StrConQry<Shift>(cmd, obj.userID,obj.moduleId);
+                // List<Shift> appMenuShift = new List<Shift>();
+                // cmd = "select \"shiftID\" from tbl_shifts ORDER BY \"shiftID\" DESC LIMIT 1";
+                // appMenuShift = (List<Shift>)_dapperQuery.StrConQry<Shift>(cmd, obj.userID,obj.moduleId);
 
-                if (appMenuShift.Count > 0)
-                {
-                    newShiftID = appMenuShift[0].shiftID + 1;
-                }
-                else
-                {
-                    newShiftID = 1;
-                }
+                // if (appMenuShift.Count > 0)
+                // {
+                //     newShiftID = appMenuShift[0].shiftID + 1;
+                // }
+                // else
+                // {
+                //     newShiftID = 1;
+                // }
                 
-                cmd2 = "insert into public.tbl_shifts (\"shiftID\", \"shiftDate\", \"shiftStartTime\", \"userID\", \"openingBalance\",\"counterID\" ,\"createdOn\", \"createdBy\", \"isDeleted\") values (" + newShiftID + ", '" + obj.shiftDate + "', '" + obj.shiftStartTime + "', " + obj.counterUserID + ", " + obj.openingBalance + ", "+obj.counterID+" ,'" + curDate + "', " + obj.userID + ", B'0')";
+                cmd2 = "update public.tbl_shifts set \"shiftDate\" = '"+obj.shiftDate+"' , \"shiftEndTime\" = '"+obj.shiftEndTime+"', \"userID\" = " + obj.counterUserID + ", \"closingBalance\" =" + obj.closingBalance + " ,\"counterID\" = "+obj.counterID+" ,\"createdOn\" = '"+curDate+"', \"createdBy\" = "+obj.userID+" where \"shiftID\" = "+obj.shiftID+"";
                
 
                 if(obj.userID != 0 && obj.moduleId !=0)
@@ -128,7 +78,7 @@ namespace posCoreModuleApi.Controllers
 
                    
                     //convert string to json data to insert in invoice detail table
-                    var invObject = JsonConvert.DeserializeObject<List<OpeningJsonCreation>>(obj.json);
+                    var invObject = JsonConvert.DeserializeObject<List<ClosingJsonCreation>>(obj.json);
 
 
                     //saving json data one by one in invoice detail table
@@ -148,7 +98,7 @@ namespace posCoreModuleApi.Controllers
                             newCounterDetailID = 1;
                         }
 
-                        cmd3 = "insert into public.\"tbl_counter_detail\" (\"counterDetailID\", \"quantity\", \"shiftID\", \"currencyID\", \"counterFlagID\", \"totalAmount\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newCounterDetailID + "', '" + item.quantity + "', '" + newShiftID + "', '" + item.currencyID + "', 1,'" + item.denomination * item.quantity + "', '" + curDate + "', " + obj.userID + ", B'0')";
+                        cmd3 = "insert into public.\"tbl_counter_detail\" (\"counterDetailID\", \"quantity\", \"shiftID\", \"currencyID\", \"counterFlagID\", \"totalAmount\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newCounterDetailID + "', '" + item.quantity + "', '" + obj.shiftID + "', '" + item.currencyID + "', 1,'" + item.denomination * item.quantity + "', '" + curDate + "', " + obj.userID + ", B'0')";
 
                          if(obj.userID != 0 && obj.moduleId !=0)
                     {
