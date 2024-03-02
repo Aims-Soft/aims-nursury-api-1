@@ -29,13 +29,13 @@ namespace posCoreModuleApi.dto.response
             _dapperQuery = dapperQuery;
         }
 
-        [HttpGet("getpackages")]
-        public IActionResult getpackages(int branchId, int userID, int moduleId)
+        [HttpGet("getPackages")]
+        public IActionResult getPackages(int businessID,int companyID, int userID, int moduleId)
         {
             try
             {
-                cmd = "select * from \"tbl_package\" where \"branchID\" = "+ branchId +" and \"isDeleted\" = B'0' ";
-                var appMenu = _dapperQuery.StrConQry<Counter>(cmd,userID,moduleId);
+                cmd = "Select * From view_package Where \"businessID\" = 3 and \"branchID\" = 4 and \"companyID\" = 1 Order by \"packageTitle\" ASC";
+                var appMenu = _dapperQuery.StrConQry<PackageDetail>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
