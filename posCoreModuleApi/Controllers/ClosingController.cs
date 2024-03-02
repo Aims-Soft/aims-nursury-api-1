@@ -71,24 +71,13 @@ namespace posCoreModuleApi.Controllers
 
                 int rowAffected = 0;
                 int rowAffected2 = 0;
-                int newShiftID = 0;
                 int newCounterDetailID = 0;
+                int newAppCounterInfoID = 0;
+                var newShiftStartTime = "";
+                float totalAmount = 0;
                 var response = "";
-
-                // List<Shift> appMenuShift = new List<Shift>();
-                // cmd = "select \"shiftID\" from tbl_shifts ORDER BY \"shiftID\" DESC LIMIT 1";
-                // appMenuShift = (List<Shift>)_dapperQuery.StrConQry<Shift>(cmd, obj.userID,obj.moduleId);
-
-                // if (appMenuShift.Count > 0)
-                // {
-                //     newShiftID = appMenuShift[0].shiftID + 1;
-                // }
-                // else
-                // {
-                //     newShiftID = 1;
-                // }
                 
-                cmd2 = "update public.tbl_shifts set \"shiftDate\" = '"+obj.shiftDate+"' , \"shiftEndTime\" = '"+obj.shiftEndTime+"', \"userID\" = " + obj.counterUserID + ", \"closingBalance\" =" + obj.closingBalance + " ,\"counterID\" = "+obj.counterID+" ,\"createdOn\" = '"+curDate+"', \"createdBy\" = "+obj.userID+" where \"shiftID\" = "+obj.shiftID+"";
+                cmd2 = "update public.tbl_shifts set \"shiftDate\" = '"+obj.shiftDate+"',\"shiftEndTime\" = '"+obj.shiftEndTime+"', \"userID\" = " + obj.counterUserID + ", \"closingBalance\" =" + obj.closingBalance + ", \"difference\" =" + obj.reconsiliation + ", \"remarks\" ='" + obj.remarks + "' ,\"counterID\" = "+obj.counterID+" ,\"createdOn\" = '"+curDate+"', \"createdBy\" = "+obj.userID+" where \"shiftID\" = "+obj.shiftID+"";
                
 
                 if(obj.userID != 0 && obj.moduleId !=0)
@@ -127,7 +116,7 @@ namespace posCoreModuleApi.Controllers
                             newCounterDetailID = 1;
                         }
 
-                        cmd3 = "insert into public.\"tbl_counter_detail\" (\"counterDetailID\", \"quantity\", \"shiftID\", \"currencyID\", \"counterFlagID\", \"totalAmount\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newCounterDetailID + "', '" + item.quantity + "', '" + obj.shiftID + "', '" + item.currencyID + "', 1,'" + item.denomination * item.quantity + "', '" + curDate + "', " + obj.userID + ", B'0')";
+                        cmd3 = "insert into public.\"tbl_counter_detail\" (\"counterDetailID\", \"quantity\", \"shiftID\", \"currencyID\", \"counterFlagID\", \"totalAmount\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newCounterDetailID + "', '" + item.quantity + "', '" + obj.shiftID + "', '" + item.currencyID + "', 2,'" + item.denomination * item.quantity + "', '" + curDate + "', " + obj.userID + ", B'0')";
 
                          if(obj.userID != 0 && obj.moduleId !=0)
                     {
@@ -138,6 +127,181 @@ namespace posCoreModuleApi.Controllers
                             rowAffected2 = con.Execute(cmd3);
                         }
                     }
+
+                }
+
+                if(rowAffected2 > 0)
+                {
+                // shiftStartTime
+                        List<Shift> appMenuStTime = new List<Shift>();
+                        cmd = "select \"shiftStartTime\" from tbl_shifts where \"shiftID\" = "+obj.shiftID+"";
+                        appMenuStTime = (List<Shift>)_dapperQuery.StrConQry<Shift>(cmd, obj.userID,obj.moduleId);
+
+                        if (appMenuStTime.Count > 0)
+                        {
+                            newShiftStartTime = appMenuStTime[0].shiftStartTime;
+                        }
+                    // S
+
+                    List<TotalAmount> appMenuTotalS = new List<TotalAmount>();
+                    cmd = "select (Sum(i.\"cashReceived\") - Sum(i.\"change\")) - Sum(i.\"discount\") as \"totalAmount\" "+
+                                    "from tbl_shifts s "+
+                                    "Inner Join invoice i on i.\"createdBy\" = s.\"userID\" "+
+                                    "Inner Join \"invoiceDetail\" id on id.\"invoiceNo\" = i.\"invoiceNo\" "+
+                                    "Inner join \"chartOfAccount\" as coa on coa.\"coaID\" = id.\"coaID\" "+
+                                    "where i.\"isDeleted\" = B'0' and id.\"isDeleted\" = B'0' and coa.\"coaTitle\" = 'Cash' and i.\"invoiceType\" = 'S' "+
+                                    "and s.\"userID\" = "+obj.counterUserID+" and i.\"invoiceDate\" = '"+obj.shiftDate+"' and i.\"invoicetime\" >= '"+newShiftStartTime+"' and i.\"invoicetime\" <= '"+obj.shiftEndTime+"'";
+                    appMenuTotalS = (List<TotalAmount>)_dapperQuery.StrConQry<TotalAmount>(cmd, obj.userID,obj.moduleId);
+
+                    if (appMenuTotalS[0].totalAmount > 0)
+                    {
+                        totalAmount = appMenuTotalS[0].totalAmount;
+                        cmd = "select \"appCounterInfoID\" from tbl_app_counter_info ORDER BY \"appCounterInfoID\" DESC LIMIT 1";
+                        appMenuTotalS = (List<TotalAmount>)_dapperQuery.StrConQry<TotalAmount>(cmd, obj.userID,obj.moduleId);
+
+                        if (appMenuTotalS.Count > 0)
+                        {
+                            newAppCounterInfoID = appMenuTotalS[0].appCounterInfoID + 1;
+                        }
+                        else
+                        {
+                            newAppCounterInfoID = 1;
+                        }
+
+                        cmd4 = "insert into public.\"tbl_app_counter_info\" (\"appCounterInfoID\", \"amount\", \"shiftID\", \"invoiceType\",\"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newAppCounterInfoID + "', '" + totalAmount + "', '" + obj.shiftID + "', 'S', '" + curDate + "', " + obj.userID + ", B'0')";
+
+                            if(obj.userID != 0 && obj.moduleId !=0)
+                        {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
+                            using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                            {
+                                rowAffected2 = con.Execute(cmd4);
+                            }
+                    }
+                    
+
+                // SR
+
+                     List<TotalAmount> appMenuTotalSR = new List<TotalAmount>();
+                    cmd = "select (Sum(i.\"cashReceived\") - Sum(i.\"change\")) - Sum(i.\"discount\") as \"totalAmount\" "+
+                                    "from tbl_shifts s "+
+                                    "Inner Join invoice i on i.\"createdBy\" = s.\"userID\" "+
+                                    "Inner Join \"invoiceDetail\" id on id.\"invoiceNo\" = i.\"invoiceNo\" "+
+                                    "Inner join \"chartOfAccount\" as coa on coa.\"coaID\" = id.\"coaID\" "+
+                                    "where i.\"isDeleted\" = B'0' and id.\"isDeleted\" = B'0' and coa.\"coaTitle\" = 'Cash' and i.\"invoiceType\" = 'SR' "+
+                                    "and s.\"userID\" = "+obj.counterUserID+" and i.\"invoiceDate\" = '"+obj.shiftDate+"' and i.\"invoicetime\" >= '"+newShiftStartTime+"' and i.\"invoicetime\" <= '"+obj.shiftEndTime+"'";
+                    appMenuTotalSR = (List<TotalAmount>)_dapperQuery.StrConQry<TotalAmount>(cmd, obj.userID,obj.moduleId);
+
+                    if (appMenuTotalSR[0].totalAmount > 0)
+                    {
+                        totalAmount = appMenuTotalSR[0].totalAmount;
+                        cmd = "select \"appCounterInfoID\" from tbl_app_counter_info ORDER BY \"appCounterInfoID\" DESC LIMIT 1";
+                        appMenuTotalSR = (List<TotalAmount>)_dapperQuery.StrConQry<TotalAmount>(cmd, obj.userID,obj.moduleId);
+
+                        if (appMenuTotalSR.Count > 0)
+                        {
+                            newAppCounterInfoID = appMenuTotalSR[0].appCounterInfoID + 1;
+                        }
+                        else
+                        {
+                            newAppCounterInfoID = 1;
+                        }
+
+                        cmd4 = "insert into public.\"tbl_app_counter_info\" (\"appCounterInfoID\", \"amount\", \"shiftID\", \"invoiceType\",\"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newAppCounterInfoID + "', '" + totalAmount + "', '" + obj.shiftID + "', 'SR', '" + curDate + "', " + obj.userID + ", B'0')";
+
+                            if(obj.userID != 0 && obj.moduleId !=0)
+                        {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
+                            using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                            {
+                                rowAffected2 = con.Execute(cmd4);
+                            }
+                    }
+
+
+                // P
+
+                     List<TotalAmount> appMenuTotalP = new List<TotalAmount>();
+                    cmd = "select (Sum(i.\"cashReceived\") - Sum(i.\"change\")) - Sum(i.\"discount\") as \"totalAmount\" "+
+                                    "from tbl_shifts s "+
+                                    "Inner Join invoice i on i.\"createdBy\" = s.\"userID\" "+
+                                    "Inner Join \"invoiceDetail\" id on id.\"invoiceNo\" = i.\"invoiceNo\" "+
+                                    "Inner join \"chartOfAccount\" as coa on coa.\"coaID\" = id.\"coaID\" "+
+                                    "where i.\"isDeleted\" = B'0' and id.\"isDeleted\" = B'0' and coa.\"coaTitle\" = 'Cash' and i.\"invoiceType\" = 'P' "+
+                                    "and s.\"userID\" = "+obj.counterUserID+" and i.\"invoiceDate\" = '"+obj.shiftDate+"' and i.\"invoicetime\" >= '"+newShiftStartTime+"' and i.\"invoicetime\" <= '"+obj.shiftEndTime+"'";
+                    appMenuTotalP = (List<TotalAmount>)_dapperQuery.StrConQry<TotalAmount>(cmd, obj.userID,obj.moduleId);
+
+                    if (appMenuTotalP[0].totalAmount > 0)
+                    {
+                        totalAmount = appMenuTotalP[0].totalAmount;
+
+                        cmd = "select \"appCounterInfoID\" from tbl_app_counter_info ORDER BY \"appCounterInfoID\" DESC LIMIT 1";
+                        appMenuTotalP = (List<TotalAmount>)_dapperQuery.StrConQry<TotalAmount>(cmd, obj.userID,obj.moduleId);
+
+                        if (appMenuTotalP.Count > 0)
+                        {
+                            newAppCounterInfoID = appMenuTotalP[0].appCounterInfoID + 1;
+                        }
+                        else
+                        {
+                            newAppCounterInfoID = 1;
+                        }
+
+                        cmd4 = "insert into public.\"tbl_app_counter_info\" (\"appCounterInfoID\", \"amount\", \"shiftID\", \"invoiceType\",\"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newAppCounterInfoID + "', '" + totalAmount + "', '" + obj.shiftID + "', 'P', '" + curDate + "', " + obj.userID + ", B'0')";
+
+                            if(obj.userID != 0 && obj.moduleId !=0)
+                        {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
+                            using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                            {
+                                rowAffected2 = con.Execute(cmd4);
+                            }
+                    }                    
+
+                // PR
+
+                     List<TotalAmount> appMenuTotalPR = new List<TotalAmount>();
+                    cmd = "select (Sum(i.\"cashReceived\") - Sum(i.\"change\")) - Sum(i.\"discount\") as \"totalAmount\" "+
+                                    "from tbl_shifts s "+
+                                    "Inner Join invoice i on i.\"createdBy\" = s.\"userID\" "+
+                                    "Inner Join \"invoiceDetail\" id on id.\"invoiceNo\" = i.\"invoiceNo\" "+
+                                    "Inner join \"chartOfAccount\" as coa on coa.\"coaID\" = id.\"coaID\" "+
+                                    "where i.\"isDeleted\" = B'0' and id.\"isDeleted\" = B'0' and coa.\"coaTitle\" = 'Cash' and i.\"invoiceType\" = 'PR' "+
+                                    "and s.\"userID\" = "+obj.counterUserID+" and i.\"invoiceDate\" = '"+obj.shiftDate+"' and i.\"invoicetime\" >= '"+newShiftStartTime+"' and i.\"invoicetime\" <= '"+obj.shiftEndTime+"'";
+                    appMenuTotalPR = (List<TotalAmount>)_dapperQuery.StrConQry<TotalAmount>(cmd, obj.userID,obj.moduleId);
+
+                    if (appMenuTotalPR[0].totalAmount > 0)
+                    {
+                        totalAmount = appMenuTotalPR[0].totalAmount;
+
+                        cmd = "select \"appCounterInfoID\" from tbl_app_counter_info ORDER BY \"appCounterInfoID\" DESC LIMIT 1";
+                        appMenuTotalPR = (List<TotalAmount>)_dapperQuery.StrConQry<TotalAmount>(cmd, obj.userID,obj.moduleId);
+
+                        if (appMenuTotalPR.Count > 0)
+                        {
+                            newAppCounterInfoID = appMenuTotalPR[0].appCounterInfoID + 1;
+                        }
+                        else
+                        {
+                            newAppCounterInfoID = 1;
+                        }
+
+                        cmd4 = "insert into public.\"tbl_app_counter_info\" (\"appCounterInfoID\", \"amount\", \"shiftID\", \"invoiceType\",\"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newAppCounterInfoID + "', '" + totalAmount + "', '" + obj.shiftID + "', 'PR', '" + curDate + "', " + obj.userID + ", B'0')";
+
+                            if(obj.userID != 0 && obj.moduleId !=0)
+                        {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
+                            using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                            {
+                                rowAffected2 = con.Execute(cmd4);
+                            }
+
+                    }
+
 
                 }
 

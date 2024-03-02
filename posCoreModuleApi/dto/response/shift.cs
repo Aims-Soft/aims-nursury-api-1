@@ -7,5 +7,6 @@ namespace posCoreModuleApi.Entities
     public class Shift
     {
         public int shiftID { get; set; }
+        public string shiftStartTime { get; set; }
     }
 }
