@@ -10,7 +10,9 @@ namespace posCoreModuleApi.Entities
         public int moduleId { get; set; }
         public string shiftDate { get; set; }
         public string shiftEndTime { get; set; }
-        public int closingBalance { get; set; }
+        public float closingBalance { get; set; }
+        public float reconsiliation { get; set; }
+        public string remarks { get; set; }
         public int counterID { get; set; }
         public int counterUserID { get; set; }
         public int userID { get; set; }
