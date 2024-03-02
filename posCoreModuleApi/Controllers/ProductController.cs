@@ -57,7 +57,7 @@ namespace posCoreModuleApi.Controllers
         }
         
         [HttpGet("getProductOfPackage")] 
-        public IActionResult getProductOfPackage(int branchID,int companyID,int userID, int moduleId)
+        public IActionResult getProductOfPackage(int branchID,int companyID,int userID, int moduleId, int packageID)
         {
             try
             {   
@@ -76,7 +76,7 @@ namespace posCoreModuleApi.Controllers
                         " JOIN brand b ON b.\"brandID\" = pro.\"brandID\" "+
                         " JOIN \"measurementUnit\" uom ON uom.\"uomID\" = pro.\"uomID\" "+
                         " Where p.\"isDeleted\" = B'0' and pd.\"isDeleted\" = B'0' and pro.\"isDeleted\" = B'0' and "+
-                          "   pp.\"isDeleted\" = B'0' and b.\"isDeleted\" = B'0'"; 
+                          "   pp.\"isDeleted\" = B'0' and b.\"isDeleted\" = B'0' and pp.branchid = " + branchID + " and pro.companyid = " + companyID + " and p.\"packageID\" = " + packageID + " "; 
                 var appMenu = _dapperQuery.StrConQry<Product>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
