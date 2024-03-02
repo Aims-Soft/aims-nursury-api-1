@@ -29,6 +29,22 @@ namespace posCoreModuleApi.Controllers
             _dapperQuery = dapperQuery;
         }
 
+        [HttpGet("getCounter")]
+        public IActionResult getCounter(int branchId, int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "select * from \"tbl_counter\" where  \"branchID\" = "+branchId+"";
+
+                var appMenu = _dapperQuery.StrConQry<Counter>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
         [HttpGet("getOpenedCounters")]
         public IActionResult getOpenedCounters(int branchId, int userID, int moduleId)
         {
