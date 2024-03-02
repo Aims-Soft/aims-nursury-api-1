@@ -55,6 +55,29 @@ namespace posCoreModuleApi.Controllers
             }
 
         }
+        
+        [HttpGet("getpackageProduct")] 
+        public IActionResult getpackageProduct(int branchID,int companyID,int userID, int moduleId)
+        {
+            try
+            {   
+                if (branchID != 0 && companyID == 0)
+                {
+                    cmd = "SELECT * FROM view_package_product where \"branchid\" = " + branchID + " order by \"productID\" desc";
+                }
+                else
+                {
+                    cmd = "SELECT * FROM view_package_product where \"branchid\" = " + branchID + " AND \"companyid\" = " + companyID + " order by \"productID\" desc";
+                }
+                var appMenu = _dapperQuery.StrConQry<Product>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
 
         // [HttpGet("getTopFKProducts")]
         // public IActionResult getTopFKProducts()
