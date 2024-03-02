@@ -100,28 +100,32 @@ namespace posCoreModuleApi.dto.response
 
                 if (rowAffected > 0)
                 {
-                    List<Package> appMenuDetail = new List<Package>();
-                    cmd = "select \"packageDetailID\" from tbl_package_details ORDER BY \"packageDetailID\" DESC LIMIT 1";
-                    appMenuDetail = (List<Package>)_dapperQuery.StrConQry<Package>(cmd, obj.userID,obj.moduleId);
+                    var invObject = JsonConvert.DeserializeObject<List<Product>>(obj.json);
+                    foreach (var item in invObject)
+                    {
+                        List<Package> appMenuDetail = new List<Package>();
+                        cmd = "select \"packageDetailID\" from tbl_package_details ORDER BY \"packageDetailID\" DESC LIMIT 1";
+                        appMenuDetail = (List<Package>)_dapperQuery.StrConQry<Package>(cmd, obj.userID,obj.moduleId);
 
-                    if (appMenuDetail.Count > 0)
-                    {
-                        newPackageDetailID = appMenuDetail[0].packageDetailID + 1;
-                    }
-                    else
-                    {
-                        newPackageDetailID = 1;
-                    }
+                        if (appMenuDetail.Count > 0)
+                        {
+                            newPackageDetailID = appMenuDetail[0].packageDetailID + 1;
+                        }
+                        else
+                        {
+                            newPackageDetailID = 1;
+                        }
 
-                    cmd3 = "insert into public.\"tbl_package_details\" (\"packageDetailID\", \"productID\", \"packageID\", \"businessID\", \"companyID\", \"branchID\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newPackageDetailID + "', " + obj.productID + ", " + newPackageID + "," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ", '" + curDate + "', " + obj.userID + ", B'0')";
+                        cmd3 = "insert into public.\"tbl_package_details\" (\"packageDetailID\", \"productID\", \"packageID\", \"businessID\", \"companyID\", \"branchID\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newPackageDetailID + "', " + item.productID + ", " + newPackageID + "," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ", '" + curDate + "', " + obj.userID + ", B'0')";
 
-                    if(obj.userID != 0 && obj.moduleId !=0)
-                    {
-                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
-                    }
-                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
-                    {
-                        rowAffected2 = con.Execute(cmd3);
+                        if(obj.userID != 0 && obj.moduleId !=0)
+                        {
+                        saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                        }
+                        using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                        {
+                            rowAffected2 = con.Execute(cmd3);
+                        }
                     }
                 }
 

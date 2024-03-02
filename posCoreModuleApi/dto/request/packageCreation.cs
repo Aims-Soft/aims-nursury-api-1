@@ -15,6 +15,6 @@ namespace posCoreModuleApi.Entities
         public int branchID { get; set; }
         public int userID { get; set; }
         public int moduleId { get; set; }
-        public int productID { get; set; }
+        public string json { get; set; }
     }
 }
