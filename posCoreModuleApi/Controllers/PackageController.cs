@@ -81,7 +81,7 @@ namespace posCoreModuleApi.dto.response
                     
                 if (packageTitle == "")
                 {
-                    cmd2 = "insert into public.tbl_package (\"packageID\", \"packageTitle\", \"packageDate\", \"businessID\", \"companyID\",\"branchID\" ,\"createdOn\", \"createdBy\", \"isDeleted\") values (" + newPackageID + ", '" + obj.packageTitle + "', '" + obj.packageDate + "', " + obj.businessID + ", " + obj.companyID + ", "+ obj.branchID +" ,'" + curDate + "', " + obj.userID + ", B'0')";
+                    cmd2 = "insert into public.tbl_package (\"packageID\", \"packageTitle\", \"barcode\", \"packageDate\", \"businessID\", \"companyID\",\"branchID\" ,\"createdOn\", \"createdBy\", \"isDeleted\") values (" + newPackageID + ", '" + obj.packageTitle + "', '" + obj.barcode + "', '" + obj.packageDate + "', " + obj.businessID + ", " + obj.companyID + ", "+ obj.branchID +" ,'" + curDate + "', " + obj.userID + ", B'0')";
                 }
                 else
                 {
@@ -145,5 +145,40 @@ namespace posCoreModuleApi.dto.response
                 return Ok(e);
             }
         }        
+
+        [HttpPost("deletePackage")]
+        public IActionResult deletePackage(PackageCreation obj)
+        {
+            try
+            {
+                DateTime curDate = DateTime.Today;
+                int rowAffected = 0;
+                var response = "";
+
+                cmd = "update tbl_package set \"isDeleted\" = B'1', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + " where \"packageID\" = " + obj.packageID + ";";
+                if(obj.userID != 0 && obj.moduleId !=0)
+                {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    {
+                    rowAffected = con.Execute(cmd);
+                    }
+                }
+
+                if (rowAffected > 0)
+                {
+                    response = "Success";
+                }
+                else
+                {
+                    response = "Invalid Input Error";
+                }
+                return Ok(new { message = response });
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
     }
 }

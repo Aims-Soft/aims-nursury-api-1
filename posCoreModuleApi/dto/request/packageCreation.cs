@@ -9,6 +9,7 @@ namespace posCoreModuleApi.Entities
     {
         public int packageID { get; set; }
         public string packageTitle { get; set; }
+        public string barcode { get; set; }
         public string packageDate { get; set; }
         public int businessID { get; set; }
         public int companyID { get; set; }
