@@ -44,6 +44,21 @@ namespace posCoreModuleApi.dto.response
             }
         }
 
+        [HttpGet("getPackageDetails")]
+        public IActionResult getPackageDetails(int businessID,int companyID, int userID, int moduleId,int packageID)
+        {
+            try
+            {
+                cmd = "Select Distinct \"productID\",\"productName\",\"productNameUrdu\" From view_package Where \"businessID\" = " + businessID + " and \"companyID\" = " + companyID + " and \"packageID\" = " + packageID + " Order by \"productName\" ASC";
+                var appMenu = _dapperQuery.StrConQry<PackageDetail>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
         [HttpPost("savePackage")]
         public IActionResult savePackage(PackageCreation obj)
         {
