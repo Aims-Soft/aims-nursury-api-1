@@ -44,8 +44,8 @@ namespace reportApi.Controllers
             }
         }
 
-        [HttpGet("getLedgerReport")]
-        public IActionResult getLedgerReport(int branchID,int companyID,int businessID,string curDate,int userID, int moduleId)
+        [HttpGet("getDailyProductSale")]
+        public IActionResult getDailyProductSale(int branchID,int companyID,int businessID,string curDate,int userID, int moduleId)
         {
             try
             {
