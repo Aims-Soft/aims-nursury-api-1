@@ -34,7 +34,7 @@ namespace posCoreModuleApi.dto.response
         {
             try
             {
-                cmd = "Select Distinct \"packageID\",\"packageTitle\",\"barcode\" From view_package Where \"businessID\" = " + businessID + " and \"companyID\" = " + companyID + " Order by \"packageTitle\" ASC";
+                cmd = "Select Distinct \"packageID\",\"packageTitle\",\"barcode\",\"packageDate\" From view_package Where \"businessID\" = " + businessID + " and \"companyID\" = " + companyID + " Order by \"packageTitle\" ASC";
                 var appMenu = _dapperQuery.StrConQry<PackageDetail>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
