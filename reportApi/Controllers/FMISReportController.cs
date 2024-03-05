@@ -44,6 +44,21 @@ namespace reportApi.Controllers
             }
         }
 
+        [HttpGet("getLedgerReport")]
+        public IActionResult getLedgerReport(int branchID,int companyID,int businessID,string curDate,int userID, int moduleId)
+        {
+            try
+            {
+                cmd = "Select * From public.\"view_dailyProductSales\" Where \"branchID\" = " + branchID + " and companyid = " + companyID + " and businessid = " + businessID + " and \"invoiceDate\" = '" + curDate + "' Order By \"productName\" ASC";
+                var appMenu = _dapperQuery.StrConQry<DailyProductSale>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+        }
+
         [HttpGet("getInvoiceDetail")]
         public IActionResult getInvoiceDetail(int companyid,int branchid,int userID, int moduleId)
         {

@@ -115,7 +115,9 @@ namespace posCoreModuleApi.dto.response
                         
                     if (packageTitle == "")
                     {
-                        cmd2 = "insert into public.tbl_package (\"packageID\", \"packageTitle\", \"barcode\", \"packageDate\", \"businessID\", \"companyID\",\"branchID\" ,\"createdOn\", \"createdBy\", \"isDeleted\") values (" + newPackageID + ", '" + obj.packageTitle + "', '" + obj.barcode + "', '" + obj.packageDate + "', " + obj.businessID + ", " + obj.companyID + ", "+ obj.branchID +" ,'" + curDate + "', " + obj.userID + ", B'0')";
+                        cmd2 = "UPDATE public.tbl_package "+
+                                " SET \"packageTitle\" = '" + obj.packageTitle + "', \"packageDate\"= '" + curDate + "', \"modifiedOn\" = '" + curDate + "', \"modifiedBy\" = " + obj.userID + ", barcode = '" + obj.barcode + "' "+
+                                " WHERE \"packageID\" = " + obj.packageID + ";";
                     }
                     else
                     {
