@@ -49,7 +49,7 @@ namespace posCoreModuleApi.dto.response
         {
             try
             {
-                cmd = "Select Distinct \"productID\",\"productName\",\"productNameUrdu\" From view_package Where \"businessID\" = " + businessID + " and \"companyID\" = " + companyID + " and \"packageID\" = " + packageID + " Order by \"productName\" ASC";
+                cmd = "Select Distinct \"productID\",\"productName\",\"productNameUrdu\",\"salePrice\",\"productBarcode\" From view_package Where \"businessID\" = " + businessID + " and \"companyID\" = " + companyID + " and \"packageID\" = " + packageID + " Order by \"productName\" ASC";
                 var appMenu = _dapperQuery.StrConQry<PackageDetail>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
@@ -74,35 +74,54 @@ namespace posCoreModuleApi.dto.response
                 var response = "";
                 var found = false;
                 var packageTitle = "";
-
-                List<Package> appMenuShift = new List<Package>();
-                cmd = "select \"packageID\" from tbl_package ORDER BY \"packageID\" DESC LIMIT 1";
-                appMenuShift = (List<Package>)_dapperQuery.StrConQry<Package>(cmd, obj.userID,obj.moduleId);
-
-                if (appMenuShift.Count > 0)
+                if (obj.packageID == 0)
                 {
-                    newPackageID = appMenuShift[0].packageID + 1;
+                    List<Package> appMenuShift = new List<Package>();
+                    cmd = "select \"packageID\" from tbl_package ORDER BY \"packageID\" DESC LIMIT 1";
+                    appMenuShift = (List<Package>)_dapperQuery.StrConQry<Package>(cmd, obj.userID,obj.moduleId);
+
+                    if (appMenuShift.Count > 0)
+                    {
+                        newPackageID = appMenuShift[0].packageID + 1;
+                    }
+                    else
+                    {
+                        newPackageID = 1;
+                    }
+                    List<Package> appMenuCounter = new List<Package>();
+                    cmd2 = "select \"packageTitle\" from tbl_package where \"isDeleted\"::int = 0 and \"packageTitle\" = '" + obj.packageTitle + "' AND \"businessID\" = " + obj.businessID + " AND \"companyID\" = " + obj.companyID + "";
+                    appMenuCounter = (List<Package>)_dapperQuery.StrConQry<Package>(cmd2, obj.userID,obj.moduleId);
+
+                    if (appMenuCounter.Count > 0)
+                        packageTitle = appMenuCounter[0].packageTitle;
+                        
+                    if (packageTitle == "")
+                    {
+                        cmd2 = "insert into public.tbl_package (\"packageID\", \"packageTitle\", \"barcode\", \"packageDate\", \"businessID\", \"companyID\",\"branchID\" ,\"createdOn\", \"createdBy\", \"isDeleted\") values (" + newPackageID + ", '" + obj.packageTitle + "', '" + obj.barcode + "', '" + obj.packageDate + "', " + obj.businessID + ", " + obj.companyID + ", "+ obj.branchID +" ,'" + curDate + "', " + obj.userID + ", B'0')";
+                    }
+                    else
+                    {
+                        found = true;
+                    }
                 }
                 else
                 {
-                    newPackageID = 1;
-                }
-                List<Package> appMenuCounter = new List<Package>();
-                cmd2 = "select \"packageTitle\" from tbl_package where \"isDeleted\"::int = 0 and \"packageTitle\" = '" + obj.packageTitle + "' AND \"businessID\" = " + obj.businessID + " AND \"companyID\" = " + obj.companyID + "";
-                appMenuCounter = (List<Package>)_dapperQuery.StrConQry<Package>(cmd2, obj.userID,obj.moduleId);
+                    List<Package> appMenuCounter = new List<Package>();
+                    cmd2 = "select \"packageTitle\" from tbl_package where \"isDeleted\"::int = 0 and \"packageTitle\" = '" + obj.packageTitle + "' AND \"businessID\" = " + obj.businessID + " AND \"companyID\" = " + obj.companyID + " AND \"packageID\" != " + obj.packageID + "";
+                    appMenuCounter = (List<Package>)_dapperQuery.StrConQry<Package>(cmd2, obj.userID,obj.moduleId);
 
-                if (appMenuCounter.Count > 0)
-                    packageTitle = appMenuCounter[0].packageTitle;
-                    
-                if (packageTitle == "")
-                {
-                    cmd2 = "insert into public.tbl_package (\"packageID\", \"packageTitle\", \"barcode\", \"packageDate\", \"businessID\", \"companyID\",\"branchID\" ,\"createdOn\", \"createdBy\", \"isDeleted\") values (" + newPackageID + ", '" + obj.packageTitle + "', '" + obj.barcode + "', '" + obj.packageDate + "', " + obj.businessID + ", " + obj.companyID + ", "+ obj.branchID +" ,'" + curDate + "', " + obj.userID + ", B'0')";
+                    if (appMenuCounter.Count > 0)
+                        packageTitle = appMenuCounter[0].packageTitle;
+                        
+                    if (packageTitle == "")
+                    {
+                        cmd2 = "insert into public.tbl_package (\"packageID\", \"packageTitle\", \"barcode\", \"packageDate\", \"businessID\", \"companyID\",\"branchID\" ,\"createdOn\", \"createdBy\", \"isDeleted\") values (" + newPackageID + ", '" + obj.packageTitle + "', '" + obj.barcode + "', '" + obj.packageDate + "', " + obj.businessID + ", " + obj.companyID + ", "+ obj.branchID +" ,'" + curDate + "', " + obj.userID + ", B'0')";
+                    }
+                    else
+                    {
+                        found = true;
+                    }   
                 }
-                else
-                {
-                    found = true;
-                }
-                
                 if(obj.userID != 0 && obj.moduleId !=0)
                 {
                     saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);

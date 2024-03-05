@@ -17,5 +17,7 @@ namespace posCoreModuleApi.Entities
         public int productID { get; set; }
         public string productName { get; set; }
         public string productNameUrdu { get; set; }
+        public float salePrice { get; set; }
+        public string productBarcode { get; set; }
     }
 }
