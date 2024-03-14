@@ -69,10 +69,12 @@ namespace posCoreModuleApi.dto.response
                 var time = curTime.ToString("HH:mm");
                 int rowAffected = 0;
                 int rowAffected2 = 0;
+                int rowAffected3 = 0;
                 int newPackageID = 0;
                 int newPackageDetailID = 0;
                 var response = "";
                 var found = false;
+                var check = false;
                 var packageTitle = "";
                 if (obj.packageID == 0)
                 {
@@ -136,6 +138,20 @@ namespace posCoreModuleApi.dto.response
 
                 if (rowAffected > 0)
                 {
+                    if (newPackageID == 0)
+                    {
+                        newPackageID = obj.packageID;    
+                    }
+                    
+                    cmd4 = "UPDATE public.tbl_package_details "+
+                        " SET \"isDeleted\" = B'1' "+
+                        " WHERE \"packageID\" = "+ obj.packageID +";";
+
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    {
+                        rowAffected3 = con.Execute(cmd4);
+                    }
+
                     var invObject = JsonConvert.DeserializeObject<List<Product>>(obj.json);
                     foreach (var item in invObject)
                     {
@@ -152,8 +168,27 @@ namespace posCoreModuleApi.dto.response
                             newPackageDetailID = 1;
                         }
 
-                        cmd3 = "insert into public.\"tbl_package_details\" (\"packageDetailID\", \"productID\", \"packageID\", \"businessID\", \"companyID\", \"branchID\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newPackageDetailID + "', " + item.productID + ", " + newPackageID + "," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ", '" + curDate + "', " + obj.userID + ", B'0')";
-
+                        List<Package> checkIfExist = new List<Package>();
+                        cmd = "select \"packageDetailID\" from tbl_package_details Where \"packageID\" = " + obj.packageID + " AND \"productID\" = " + item.productID + " ";
+                        checkIfExist = (List<Package>)_dapperQuery.StrConQry<Package>(cmd, obj.userID,obj.moduleId);
+                        if (checkIfExist.Count > 0)
+                        {
+                            check = true;
+                        }
+                        else
+                        {
+                            check = false;
+                        }
+                        if(check == false)
+                        {
+                            cmd3 = "insert into public.\"tbl_package_details\" (\"packageDetailID\", \"productID\", \"packageID\", \"businessID\", \"companyID\", \"branchID\", \"createdOn\", \"createdBy\", \"isDeleted\") values ('" + newPackageDetailID + "', " + item.productID + ", " + newPackageID + "," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ", '" + curDate + "', " + obj.userID + ", B'0')";
+                        }
+                        else
+                        {
+                            cmd3 = "UPDATE public.tbl_package_details "+
+                            " SET \"isDeleted\" = B'0' "+
+                            " Where \"packageID\" = " + obj.packageID + " AND \"productID\" = " + item.productID + "";
+                        }
                         if(obj.userID != 0 && obj.moduleId !=0)
                         {
                         saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
@@ -171,7 +206,14 @@ namespace posCoreModuleApi.dto.response
                 }
                 else
                 {
-                    response = "Server Issue";
+                    if (found == true)
+                    {
+                        response = "Package Already Exist.";    
+                    }
+                    else
+                    {
+                        response = "Server Issue";
+                    }
                 }
 
                 return Ok(new { message = response});
