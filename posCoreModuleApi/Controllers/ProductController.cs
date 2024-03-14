@@ -86,6 +86,50 @@ namespace posCoreModuleApi.Controllers
             }
 
         }
+
+
+        [HttpGet("getProductOfPackageBarcode")] 
+        public IActionResult getProductOfPackageBarcode(int branchID,int companyID,int userID, int moduleId, string barcode)
+        {
+            
+            try
+            { 
+                List<PackageDetail> appMenuProduct = new List<PackageDetail>();
+                int packageID = 0;
+
+                cmd2 = "select \"packageID\" from tbl_package where \"isDeleted\"::int = 0 AND \"barcode\" = '" + barcode + "' AND \"branchID\" = " + branchID + " AND \"companyID\" = " + companyID + "";
+                appMenuProduct = (List<PackageDetail>)_dapperQuery.StrConQry<PackageDetail>(cmd2, userID,moduleId);
+
+                if (appMenuProduct.Count > 0)
+                {
+                    packageID = appMenuProduct[0].packageID;
+                }
+
+                cmd = "Select Distinct pro.\"productID\",pro.\"categoryID\",pro.\"uomID\",pro.\"sizeID\",pro.\"colorID\",pro.\"brandID\",pro.\"productName\", "+
+                            "pro.\"productNameUrdu\",pro.\"ROL\",pro.\"maxLimit\",pro.\"quickSale\",pro.\"pctCode\",pro.applicationedoc,pro.\"mfgDate\", "+
+                            "pro.\"expDate\",pp.\"pPriceID\",pp.\"costPrice\",pp.\"salePrice\",pp.\"retailPrice\",pp.\"wholeSalePrice\","+
+                            "pp.gst,pp.et,pp.packing,pp.\"packingSalePrice\",bc.\"barcodeID\",bc.barcode1,bc.barcode2,bc.barcode3,"+
+                            "c.\"categoryName\",c.\"parentCategoryID\",c.level1,c.level2,c.level3,c.level4,c.level5,b.\"brandName\","+
+                            " uom.\"uomName\",pp.branchid,pro.businessid,pro.companyid,pro.\"potType\",pro.\"potSize\",'product'::text AS ptype "+
+                        " From tbl_package p "+
+                        " Inner Join tbl_package_details pd on pd.\"packageID\" = p.\"packageID\" "+
+                        " Inner join product pro on pro.\"productID\" = pd.\"productID\" "+
+                        " Inner Join \"productPrice\" pp on pp.\"productID\" = pro.\"productID\" "+
+                        " Inner Join barcode bc on bc.\"productID\" = pro.\"productID\" "+
+                        " JOIN category c ON c.\"categoryID\" = pro.\"categoryID\" "+
+                        " JOIN brand b ON b.\"brandID\" = pro.\"brandID\" "+
+                        " JOIN \"measurementUnit\" uom ON uom.\"uomID\" = pro.\"uomID\" "+
+                        " Where p.\"isDeleted\" = B'0' and pd.\"isDeleted\" = B'0' and pro.\"isDeleted\" = B'0' and "+
+                          "   pp.\"isDeleted\" = B'0' and b.\"isDeleted\" = B'0' and pp.branchid = " + branchID + " and pro.companyid = " + companyID + " and p.\"packageID\" = " + packageID + " "; 
+                var appMenu = _dapperQuery.StrConQry<Product>(cmd,userID,moduleId);
+                return Ok(appMenu);
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
         
         [HttpGet("getpackageProduct")] 
         public IActionResult getpackageProduct(int branchID,int companyID,int userID, int moduleId)
