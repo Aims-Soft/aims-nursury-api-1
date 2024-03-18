@@ -399,11 +399,11 @@ namespace UMISModuleAPI.Controllers
                 // appMenuUser = (List<userCreation>)dapperQuery.QryResult<userCreation>(cmd, _dbCon);
                 if (obj.userTypeID == 1)
                 {
-                    cmd = "update public.\"users\" set \"empName\" = '" + obj.empName + "', \"loginName\" = '" + obj.loginName +"' ,\"dateOfBirth\" = '"+ obj.dateOfBirth +"', \"gender\" = '"+ obj.gender +"', \"companyID\" = '"+ obj.companyID +"', \"businessID\" = '"+ obj.businessID +"', \"branchID\" = '"+ obj.branchID +"', \"modifiedOn\" = '" + curDate + "' where \"userID\"="+obj.userID+"";    
+                    cmd = "update public.\"users\" set \"empName\" = '" + obj.empName + "',\"Password\" = '" + obj.Password + "', \"loginName\" = '" + obj.loginName +"' ,\"dateOfBirth\" = '"+ obj.dateOfBirth +"', \"gender\" = '"+ obj.gender +"', \"companyID\" = '"+ obj.companyID +"', \"businessID\" = '"+ obj.businessID +"', \"branchID\" = '"+ obj.branchID +"', \"modifiedOn\" = '" + curDate + "' where \"userID\"="+obj.userID+"";    
                 }
                 else
                 {
-                    cmd = "update public.\"users\" set \"empName\" = '" + obj.empName + "', \"companyID\" = '"+ obj.companyID +"', \"businessID\" = '"+ obj.businessID +"', \"branchID\" = '"+ obj.branchID +"', \"loginName\" = '" + obj.loginName +"' ,\"dateOfBirth\" = '"+ obj.dateOfBirth +"',\"gender\" = '"+ obj.gender +"', \"modifiedOn\" = '" + curDate + "', \"applicationEDoc\" = '" + obj.applicationEDocPath + "' where \"userID\"="+obj.userID+"";
+                    cmd = "update public.\"users\" set \"empName\" = '" + obj.empName + "',\"Password\" = '" + obj.Password + "', \"companyID\" = '"+ obj.companyID +"', \"businessID\" = '"+ obj.businessID +"', \"branchID\" = '"+ obj.branchID +"', \"loginName\" = '" + obj.loginName +"' ,\"dateOfBirth\" = '"+ obj.dateOfBirth +"',\"gender\" = '"+ obj.gender +"', \"modifiedOn\" = '" + curDate + "', \"applicationEDoc\" = '" + obj.applicationEDocPath + "' where \"userID\"="+obj.userID+"";
                 }
                 
                 using (NpgsqlConnection con = new NpgsqlConnection(_dbCon.Value.dbCon))

@@ -220,7 +220,7 @@ namespace posCoreModuleApi.dto.response
             }
             catch (Exception e)
             {
-                return Ok(e);
+                return StatusCode(500, new { error = e.Message });
             }
         }        
 
