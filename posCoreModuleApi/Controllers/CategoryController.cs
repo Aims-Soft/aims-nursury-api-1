@@ -97,6 +97,7 @@ namespace posCoreModuleApi.Controllers
                 var response = "";
                 var found = false;
                 var category = "";
+                var newCategoryID = 0;
 
                 List<Category> appMenuCategory = new List<Category>();
                 cmd2 = "select \"categoryName\" from category where \"isDeleted\"::int = 0 and \"parentCategoryID\" is null and \"categoryName\" = '" + obj.categoryName + "' AND \"businessid\" = " + obj.businessID + " AND \"companyid\" = " + obj.companyID + "";
@@ -105,11 +106,24 @@ namespace posCoreModuleApi.Controllers
                 if (appMenuCategory.Count > 0)
                     category = appMenuCategory[0].categoryName;
 
+                List<Category> appMenuShift = new List<Category>();
+                cmd = "select \"categoryID\" from category ORDER BY \"categoryID\" DESC LIMIT 1";
+                appMenuShift = (List<Category>)_dapperQuery.StrConQry<Category>(cmd, obj.userID,obj.moduleId);
+
+                    if (appMenuShift.Count > 0)
+                    {
+                        newCategoryID = appMenuShift[0].categoryID + 1;
+                    }
+                    else
+                    {
+                        newCategoryID = 1;
+                    }
+
                 if (obj.categoryID == 0)
                 {
                     if (category == "")
                     {
-                        cmd = "insert into public.category (\"categoryName\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + obj.categoryName + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ")";
+                        cmd = "insert into public.category (\"categoryID\",\"categoryName\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ("+ newCategoryID +",'" + obj.categoryName + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ")";
                     }
                     else
                     {
@@ -153,7 +167,7 @@ namespace posCoreModuleApi.Controllers
             }
             catch (Exception e)
             {
-                return Ok(e);
+                return StatusCode(500, new { error = e.Message });
             }
 
         }
@@ -216,6 +230,7 @@ namespace posCoreModuleApi.Controllers
                 var response = "";
                 var found = false;
                 var category = "";
+                var newCategoryID = 0;
 
                 List<Category> appMenuCategory = new List<Category>();
                 cmd2 = "select \"categoryName\" from category where \"isDeleted\"::int = 0 and \"parentCategoryID\" ='" + obj.parentCategoryID + "' and \"categoryName\" = '" + obj.categoryName + "'";
@@ -224,11 +239,24 @@ namespace posCoreModuleApi.Controllers
                 if (appMenuCategory.Count > 0)
                     category = appMenuCategory[0].categoryName;
 
+                List<Category> appMenuShift = new List<Category>();
+                cmd = "select \"categoryID\" from category ORDER BY \"categoryID\" DESC LIMIT 1";
+                appMenuShift = (List<Category>)_dapperQuery.StrConQry<Category>(cmd, obj.userID,obj.moduleId);
+
+                    if (appMenuShift.Count > 0)
+                    {
+                        newCategoryID = appMenuShift[0].categoryID + 1;
+                    }
+                    else
+                    {
+                        newCategoryID = 1;
+                    }
+
                 if (obj.categoryID == 0)
                 {
                     if (category == "")
                     {
-                        cmd = "insert into public.category (\"categoryName\", \"parentCategoryID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ('" + obj.categoryName + "', '" + obj.parentCategoryID + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ")";
+                        cmd = "insert into public.category (\"categoryID\",\"categoryName\", \"parentCategoryID\", \"createdOn\", \"createdBy\", \"isDeleted\",\"businessid\",\"companyid\",\"branchID\") values ("+ newCategoryID +",'" + obj.categoryName + "', '" + obj.parentCategoryID + "', '" + curDate + "', " + obj.userID + ", B'0'," + obj.businessID + "," + obj.companyID + "," + obj.branchID + ")";
 
                     }
                     else
