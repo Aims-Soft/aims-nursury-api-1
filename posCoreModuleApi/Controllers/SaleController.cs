@@ -702,6 +702,53 @@ namespace posCoreModuleApi.Controllers
             }
 
         }
+
+        [HttpPost("deleteInvoice")]
+        public IActionResult deleteInvoice(InvoiceCreation obj)
+        {
+            try
+            {
+                DateTime curDate = DateTime.Today;
+                int rowAffected = 0;
+                int rowAffected2 = 0;
+                var response = "";
+
+                cmd = "update \"invoice\" set \"isDeleted\" = B'1' where \"invoiceNo\" = "+ obj.invoiceNo +";";
+                
+                cmd2 = "update \"invoiceDetail\" set \"isDeleted\" = B'1' where \"invoiceNo\" = "+ obj.invoiceNo +";";
+
+                if(obj.userID != 0 && obj.moduleId !=0)
+                {
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    {
+                        rowAffected = con.Execute(cmd2);
+                    }
+                    
+                    saveConStr = _dapperQuery.FindMe(obj.userID,obj.moduleId);
+                    using (NpgsqlConnection con = new NpgsqlConnection(saveConStr))
+                    {
+                        rowAffected2 = con.Execute(cmd);
+                    }
+                }
+
+                if (rowAffected > 0 && rowAffected2 > 0)
+                {
+                    response = "Success";
+                }
+                else
+                {
+                    response = "Invalid Input Error";
+                }
+
+                return Ok(new { message = response });
+            }
+            catch (Exception e)
+            {
+                return Ok(e);
+            }
+
+        }
     
     }
 }
