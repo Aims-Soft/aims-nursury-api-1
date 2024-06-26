@@ -92,7 +92,7 @@ namespace posCoreModuleApi.Controllers
 
                 List<Party> appMenuParty = new List<Party>();
             //    cmd2 = "select cnic from party where \"isDeleted\"::int = 0 AND cnic = '" + obj.cnic + "' AND (\"type\" = 'supplier' OR \"type\" = 'customer')";
-                cmd2 = "select \"partyID\" from party where \"isDeleted\"::int = 0 AND (cnic = '" + obj.cnic + "' or mobile = '"+ obj.mobile +"') AND (\"type\" = 'supplier' OR \"type\" = 'customer')";
+                cmd2 = "select \"partyID\" from party where \"isDeleted\"::int = 0 AND (cnic = '" + obj.cnic + "' or mobile = '"+ obj.mobile +"') AND (\"type\" = 'supplier' OR \"type\" = 'customer') AND companyid = " + obj.companyid + " and businessid = " + obj.businessid + "";
                 appMenuParty = (List<Party>)_dapperQuery.StrConQry<Party>(cmd2, obj.userID,obj.moduleId);
 
                 if (appMenuParty.Count > 0)

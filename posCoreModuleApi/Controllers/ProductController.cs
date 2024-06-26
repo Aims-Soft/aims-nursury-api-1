@@ -138,18 +138,42 @@ namespace posCoreModuleApi.Controllers
             {   
                 if (branchID != 0 && companyID == 0)
                 {
-                    cmd = "SELECT * FROM view_package_product where \"branchid\" = " + branchID + " order by \"productID\" desc";
+                    cmd = "SELECT *, COALESCE(( SELECT COALESCE(sum(ivd.qty), 0::double precision) AS qty FROM invoice i " +
+                              "  JOIN \"invoiceDetail\" ivd ON ivd.\"invoiceNo\" = i.\"invoiceNo\" " +
+                           " WHERE (i.\"invoiceType\"::text = ANY (ARRAY['P'::text, 'SR'::text])) AND i.\"isDeleted\"::integer = 0 AND ivd.\"isDeleted\"::integer = 0 AND ivd.\"productName\" IS NOT NULL " +
+                             "   and ivd.\"productID\" = vpp.\"productID\" " +
+                              "  GROUP BY ivd.\"productID\" " +
+                            "),0)-COALESCE(( " +
+                            "SELECT COALESCE(sum(ivd.qty), 0::double precision) AS qty " +
+                            "FROM invoice i " +
+                             "   JOIN \"invoiceDetail\" ivd ON ivd.\"invoiceNo\" = i.\"invoiceNo\" " +
+                            "WHERE (i.\"invoiceType\"::text = ANY (ARRAY['S'::text, 'PR'::text])) AND i.\"isDeleted\"::integer = 0 AND ivd.\"isDeleted\"::integer = 0 AND ivd.\"productName\" IS NOT NULL " +
+                            "    and ivd.\"productID\" = vpp.\"productID\" " +
+                             "   GROUP BY ivd.\"productID\" " +
+                            "),0) as qty FROM view_package_product as vpp where \"branchid\" = " + branchID + " order by \"productID\" desc";
                 }
                 else
                 {
-                    cmd = "SELECT * FROM view_package_product where \"branchid\" = " + branchID + " AND \"companyid\" = " + companyID + " order by \"productID\" desc";
+                    cmd = "SELECT *, COALESCE(( SELECT COALESCE(sum(ivd.qty), 0::double precision) AS qty FROM invoice i " +
+                              "  JOIN \"invoiceDetail\" ivd ON ivd.\"invoiceNo\" = i.\"invoiceNo\" " +
+                           " WHERE (i.\"invoiceType\"::text = ANY (ARRAY['P'::text, 'SR'::text])) AND i.\"isDeleted\"::integer = 0 AND ivd.\"isDeleted\"::integer = 0 AND ivd.\"productName\" IS NOT NULL " +
+                             "   and ivd.\"productID\" = vpp.\"productID\" " +
+                              "  GROUP BY ivd.\"productID\" " +
+                            "),0)-COALESCE(( " +
+                            "SELECT COALESCE(sum(ivd.qty), 0::double precision) AS qty " +
+                            "FROM invoice i " +
+                             "   JOIN \"invoiceDetail\" ivd ON ivd.\"invoiceNo\" = i.\"invoiceNo\" " +
+                            "WHERE (i.\"invoiceType\"::text = ANY (ARRAY['S'::text, 'PR'::text])) AND i.\"isDeleted\"::integer = 0 AND ivd.\"isDeleted\"::integer = 0 AND ivd.\"productName\" IS NOT NULL " +
+                            "    and ivd.\"productID\" = vpp.\"productID\" " +
+                             "   GROUP BY ivd.\"productID\" " +
+                            "),0) as qty FROM view_package_product as vpp where \"branchid\" = " + branchID + " AND \"companyid\" = " + companyID + " order by \"productID\" desc";
                 }
                 var appMenu = _dapperQuery.StrConQry<Product>(cmd,userID,moduleId);
                 return Ok(appMenu);
             }
             catch (Exception e)
             {
-                return Ok(e);
+                 return StatusCode(500, new { error = e.Message });
             }
 
         }
