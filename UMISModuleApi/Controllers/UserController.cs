@@ -48,11 +48,18 @@ namespace UMISModuleAPI.Controllers
         [HttpPost("authenticate")]
         public IActionResult Authenticate(AuthenticateRequest model)
         {
-            var response = _userService.Authenticate(model);
-            if (response == null)
-                return BadRequest(new { message = "user name or password is incorrect" });
+            try
+            {
+                var response = _userService.Authenticate(model);
+                if (response == null)
+                    return BadRequest(new { message = "user name or password is incorrect" });
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return Ok(e.Message);
+            }
         }
 
         [HttpGet("getPin")]

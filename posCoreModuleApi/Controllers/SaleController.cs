@@ -461,7 +461,7 @@ namespace posCoreModuleApi.Controllers
             }
             catch (Exception e)
             {
-                return Ok(e);
+                return Ok(e.Message);
             }
 
         }

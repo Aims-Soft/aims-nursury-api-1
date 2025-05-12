@@ -45,6 +45,18 @@ namespace UMISModuleApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "UMISModuleApi", Version = "v1" });
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", builder =>
+                {
+                    builder.WithOrigins("http://159.69.174.28:7060")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+
+            services.AddControllers(); // or AddMvc()
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,7 +80,7 @@ namespace UMISModuleApi
                 .AllowAnyHeader()
             );
 
-            // app.UseAuthorization();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
